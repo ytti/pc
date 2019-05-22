@@ -1,5 +1,5 @@
 use reqwest::Url;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
 mod error;
 
@@ -10,7 +10,7 @@ pub trait PasteClient {
     // TODO: help() function to return a help message as a string
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(tag = "backend")]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]

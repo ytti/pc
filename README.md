@@ -1,6 +1,6 @@
-# PC
+# pc
 
-PC (paste-client) is a command line tool for uploading text to a pastebin
+pc (paste-client) is a command line tool for uploading text to a pastebin
 server. It supports many different pastebin style servers, and is configurable.
 It aims to be simple, work with stdin/stdout, and adhere to the unix
 philosophy.
@@ -21,17 +21,17 @@ $ pc --help
 $ pc --server vpaste < code.txt
 http://vpaste.net/example
 
-$ pc --list-servers
+$ pc list-servers
 rs: (generic) https://paste.rs/
 vpaste: (generic) http://vpaste.net/
 haste: (haste) https://hastebin.com/
 
-$ pc --list-backends
+$ pc list-backends
 generic
 haste
 vpaste
 
-$ pc --backend-info generic
+$ pc backend-info generic
 The generic backend works for any pastebin service that accepts the data in the
 body of a POST request and returns the access url in plain text in the response
 body.
@@ -42,10 +42,14 @@ Example:
   backend = "generic"
   url = "https://paste.rs/"
 
-$ pc --print-config
+$ pc dump-config
 <toml config as currently used>
+
+$ pc -c NONE dump-config
+<default config as toml>
 ```
 
+TODO: consider paste|url history
 
 ## Configuration
 

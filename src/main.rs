@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::{self, Read};
 use std::path::Path;
 
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use structopt::StructOpt;
 
 use pc::{build_client, BackendConfig, PasteClient};
@@ -18,16 +18,26 @@ struct Opt {
 
     #[structopt(long = "server", short = "s")]
     server: Option<String>,
+
+    #[structopt(subcommand)]
+    cmd: Option<OptCommand>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, StructOpt)]
+enum OptCommand {
+    #[structopt(name = "dump-config")]
+    /// Print the configuration as currently used.
+    DumpConfig,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct Config {
     main: MainConfig,
     servers: HashMap<String, BackendConfig>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct MainConfig {
     default: Option<String>,
@@ -60,12 +70,16 @@ fn read_file(fname: &str) -> io::Result<String> {
     Ok(contents)
 }
 
-fn read_config(fname: Option<String>) -> Result<Config, Box<dyn std::error::Error>> {
+fn read_config(fname: &Option<String>) -> Result<Config, Box<dyn std::error::Error>> {
     match fname {
         Some(s) => {
-            let data = read_file(&s)?;
-            let config = toml::from_str(&data)?;
-            Ok(config)
+            if s.as_str() == "NONE" {
+                Ok(Config::default())
+            } else {
+                let data = read_file(&s)?;
+                let config = toml::from_str(&data)?;
+                Ok(config)
+            }
         }
         None => {
             let config_dir = match env::var("XDG_CONFIG_HOME") {
@@ -101,9 +115,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn run(opt: Opt) -> Result<(), Box<dyn std::error::Error>> {
-    let config = read_config(opt.config_file)?;
-
+fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn std::error::Error>> {
     // sanity checking
     if config.servers.len() < 1 {
         return Err(r#"No servers defined in configuration!
@@ -139,6 +151,18 @@ Define one in the config file like:
     // send the url to stdout!
     println!("{}", paste_url);
     Ok(())
+}
+
+fn run(opt: Opt) -> Result<(), Box<dyn std::error::Error>> {
+    let config = read_config(&opt.config_file)?;
+
+    match opt.cmd {
+        None => do_paste(opt, config),
+        Some(OptCommand::DumpConfig) => {
+            println!("{}", toml::to_string(&config)?);
+            Ok(())
+        },
+    }
 }
 
 fn main() {

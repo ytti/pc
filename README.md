@@ -45,15 +45,14 @@ $ pc --print-config
 
 ## Configuration
 
-Configuration is via a toml file. The configuration file is searched for in the
-following locations, and the first one found use used:
+Configuration is via a toml file. The configuration file is determined by the
+following:
 
 1. file given to the `-c` command line arg. (exits with error if this file
    isn't found)
-2. `$XDG_CONFIG_HOME/pc/config.toml`
-3. `$HOME/.config/pc/config.toml`
-4. `$HOME/.pc.toml`
-5. no files; hardcoded defaults are used
+2. check `$XDG_CONFIG_HOME/pc/config.toml`
+3. check `$HOME/.config/pc/config.toml`
+5. no files found; hardcoded defaults used
 
 
 Example config file:
@@ -76,6 +75,14 @@ url = "https://paste.rs/"
 backend = "hastebin"
 url = "https://hastebin.com/"
 ```
+
+
+## Development
+
+Standard cargo project. Nothing fancy.
+
+There is a makefile for some other common tasks. Eg. `make fmt` will run
+rustfmt on all source files.
 
 
 ## License

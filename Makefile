@@ -1,5 +1,5 @@
 
-SOURCES := $(wildcard src/*.rs)
+SOURCES := $(wildcard src/*/*.rs src/*.rs)
 
 fmt: $(SOURCES)
 	rustfmt $(SOURCES)

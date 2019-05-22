@@ -1,10 +1,11 @@
 use std::collections::HashMap;
 use std::env;
+use std::error::Error;
 use std::fs::File;
 use std::io::{self, Read};
 use std::path::Path;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 
 use pc::{build_client, BackendConfig, PasteClient};
@@ -16,6 +17,7 @@ struct Opt {
     #[structopt(long = "config", short = "c")]
     config_file: Option<String>,
 
+    /// Select which user-defined server to use
     #[structopt(long = "server", short = "s")]
     server: Option<String>,
 
@@ -70,7 +72,7 @@ fn read_file(fname: &str) -> io::Result<String> {
     Ok(contents)
 }
 
-fn read_config(fname: &Option<String>) -> Result<Config, Box<dyn std::error::Error>> {
+fn read_config(fname: &Option<String>) -> Result<Config, Box<dyn Error>> {
     match fname {
         Some(s) => {
             if s.as_str() == "NONE" {
@@ -115,7 +117,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn std::error::Error>> {
+fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.len() < 1 {
         return Err(r#"No servers defined in configuration!
@@ -153,7 +155,7 @@ Define one in the config file like:
     Ok(())
 }
 
-fn run(opt: Opt) -> Result<(), Box<dyn std::error::Error>> {
+fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
     let config = read_config(&opt.config_file)?;
 
     match opt.cmd {
@@ -161,7 +163,7 @@ fn run(opt: Opt) -> Result<(), Box<dyn std::error::Error>> {
         Some(OptCommand::DumpConfig) => {
             println!("{}", toml::to_string(&config)?);
             Ok(())
-        },
+        }
     }
 }
 

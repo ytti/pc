@@ -1,12 +1,12 @@
-use serde::Deserialize;
 use reqwest::Url;
+use serde::Deserialize;
 
 mod error;
 
 use crate::error::Result;
 
 pub trait PasteClient {
-    fn paste(&self, data: String) -> Result<String>;
+    fn paste(&self, data: String) -> Result<Url>;
     // TODO: help() function to return a help message as a string
 }
 
@@ -42,14 +42,13 @@ impl GenericBackend {
 }
 
 impl PasteClient for GenericBackend {
-    fn paste(&self, data: String) -> Result<String> {
+    fn paste(&self, data: String) -> Result<Url> {
         let client = reqwest::Client::new();
         let text = client.post(&self.url).body(data).send()?.text()?;
-        Ok(text)
+        let url = Url::parse(&text)?;
+        Ok(url)
     }
 }
-
-
 
 /// Hastebin backend. Supports any servers running Haste
 /// <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
@@ -65,16 +64,17 @@ impl HastebinBackend {
 }
 
 impl PasteClient for HastebinBackend {
-    fn paste(&self, data: String) -> Result<String> {
+    fn paste(&self, data: String) -> Result<Url> {
         let client = reqwest::Client::new();
 
         let mut base_url = Url::parse(&self.url)?;
 
         base_url.set_path("documents");
-        let info: HastebinPasteResponse = client.post(base_url.clone()).body(data).send()?.json()?;
+        let info: HastebinPasteResponse =
+            client.post(base_url.clone()).body(data).send()?.json()?;
 
         base_url.set_path(&info.key);
-        Ok(base_url.into_string())
+        Ok(base_url)
     }
 }
 

@@ -5,6 +5,9 @@ server. It supports many different pastebin style servers, and is configurable.
 It aims to be simple, work with stdin/stdout, and adhere to the unix
 philosophy.
 
+NOTE: this is under early development. Not all the features listed in the
+readme are implemented yet.
+
 
 ## Usage examples
 
@@ -16,16 +19,17 @@ $ pc --help
 <usage instructions>
 
 $ pc --server vpaste < code.txt
-https://paste.rs/saC
+http://vpaste.net/example
 
 $ pc --list-servers
 rs: (generic) https://paste.rs/
 vpaste: (generic) http://vpaste.net/
-haste: (hastebin) https://hastebin.com/
+haste: (haste) https://hastebin.com/
 
 $ pc --list-backends
 generic
-hastebin
+haste
+vpaste
 
 $ pc --backend-info generic
 The generic backend works for any pastebin service that accepts the data in the
@@ -34,9 +38,9 @@ body.
 
 Example:
 
-  [servers.vpaste]
+  [servers.rs]
   backend = "generic"
-  url = "http://vpaste.net/"
+  url = "https://paste.rs/"
 
 $ pc --print-config
 <toml config as currently used>
@@ -59,29 +63,39 @@ Example config file:
 
 ```toml
 [main]
+# optional; if missing, will use random server entry
 default = "rs"
 
 [servers]
 
+# must be at least one server defined
 [servers.vpaste]
-backend = "generic"
+backend = "vpaste"
 url = "http://vpaste.net/"
 
 [servers.rs]
-# generic backend is also default
+backend = "generic"
 url = "https://paste.rs/"
 
 [servers.haste]
-backend = "hastebin"
+backend = "haste"
 url = "https://hastebin.com/"
 ```
+
+## Supported servers
+
+| server                                              | backend                | example url           |
+| ------                                              | -------                | ---------------       |
+| [vpaste](http://pileus.org/tools/vpaste)            | vpaste (unimplemented) | http://vpaste.net/    |
+| [Haste](https://github.com/seejohnrun/haste-server) | haste                  | https://hastebin.com/ |
+| [paste.rs](https://paste.rs/web)                    | generic                | https://paste.rs/     |
 
 
 ## Development
 
-Standard cargo project. Nothing fancy.
+Standard cargo project. `cargo build`, `cargo run`, et al.
 
-There is a makefile for some other common tasks. Eg. `make fmt` will run
+There is a Makefile for some other common tasks. Eg. `make fmt` will run
 rustfmt on all source files.
 
 

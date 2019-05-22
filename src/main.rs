@@ -15,6 +15,9 @@ struct Opt {
     /// Use a custom config file
     #[structopt(long = "config", short = "c")]
     config_file: Option<String>,
+
+    #[structopt(long = "server", short = "s")]
+    server: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -27,14 +30,14 @@ struct Config {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MainConfig {
-    default: String,
+    default: Option<String>,
 }
 
 impl std::default::Default for Config {
     fn default() -> Self {
         Config {
             main: MainConfig {
-                default: "paste_rs".to_owned(),
+                default: Some("paste_rs".to_owned()),
             },
             servers: {
                 let mut servers = HashMap::new();
@@ -99,27 +102,42 @@ fn read_stdin() -> io::Result<String> {
 }
 
 fn run(opt: Opt) -> Result<(), Box<dyn std::error::Error>> {
-    dbg!(&opt);
-
     let config = read_config(opt.config_file)?;
-    dbg!(&config);
 
-    let server_choice: String = config.main.default;
+    // sanity checking
+    if config.servers.len() < 1 {
+        return Err(r#"No servers defined in configuration!
+Define one in the config file like:
+
+    [servers.rs]
+    backend = "generic"
+    url = "https://paste.rs/""#
+            .into());
+    }
+
+    // -s cli arg > config file > random server
+    let server_choice: String = opt.server.unwrap_or_else(|| {
+        config
+            .main
+            .default
+            .clone()
+            .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned())
+    });
 
     let client_config: &BackendConfig = match config.servers.get(&server_choice) {
         Some(choice) => choice,
         None => {
-            return Err("helo".into());
+            // TODO: more helpful error message
+            return Err(format!("No corresponding server config for {}", server_choice).into());
         }
     };
 
     let data = read_stdin()?;
-
     let client = build_client(client_config);
+    let paste_url = client.paste(data)?;
 
-    let paste_info = client.paste(data)?;
-
-    println!("{}", paste_info);
+    // send the url to stdout!
+    println!("{}", paste_url);
     Ok(())
 }
 

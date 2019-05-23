@@ -4,7 +4,7 @@ mod types;
 mod utils;
 
 pub use crate::backends::BackendConfig;
-pub use crate::backends::{generic, fiche, haste, vpaste};
+pub use crate::backends::{fiche, generic, haste, vpaste};
 pub use crate::types::PasteClient;
 
 /// Provides a paste client implementation given config

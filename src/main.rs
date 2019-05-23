@@ -158,8 +158,12 @@ Define one in the config file like:
     let client_config: BackendConfig = match config.servers.get(&server_choice) {
         Some(choice) => choice.to_owned(),
         None => {
-            // TODO: more helpful error message with example
-            return Err(format!("No corresponding server config for {}", server_choice).into());
+            return Err(format!(
+                r#"No corresponding server config for {0}.
+To use this, add a server block under the heading [servers.{0}] in the config toml file."#,
+                server_choice
+            )
+            .into());
         }
     };
 

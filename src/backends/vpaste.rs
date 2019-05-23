@@ -1,6 +1,5 @@
 use reqwest::multipart::Form;
 use reqwest::Client;
-use serde::Serialize;
 use url::Url;
 
 use crate::error::PasteResult;
@@ -42,9 +41,4 @@ impl PasteClient for Vpaste {
             .send()?;
         Ok(res.url().to_owned())
     }
-}
-
-#[derive(Debug, Serialize)]
-struct VpasteFormParams {
-    text: String,
 }

@@ -135,7 +135,7 @@ fn read_stdin() -> io::Result<String> {
 
 fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn Error>> {
     // sanity checking
-    if config.servers.len() < 1 {
+    if config.servers.is_empty() {
         return Err(r#"No servers defined in configuration!
 Define one in the config file like:
 

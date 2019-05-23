@@ -1,8 +1,20 @@
 use reqwest::Client;
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
+
+use crate::utils::{deserialize_url, serialize_url};
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "snake_case")]
+pub struct GenericConfig {
+    #[serde(deserialize_with = "deserialize_url")]
+    #[serde(serialize_with = "serialize_url")]
+    url: Url,
+}
 
 /// Generic paste service backend. Supports any pastebin services with the following two
 /// properties:

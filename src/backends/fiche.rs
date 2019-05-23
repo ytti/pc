@@ -46,9 +46,9 @@ Example config block:
 
 impl PasteClient for Fiche {
     fn paste(&self, data: String) -> PasteResult<Url> {
-        let mut stream = TcpStream::connect("termbin.com:9999")?;
+        let mut stream = TcpStream::connect(format!("{}:{}", self.domain, self.port))?;
 
-        stream.write(data.as_bytes());
+        stream.write(data.as_bytes())?;
 
         let mut response = String::new();
         stream.read_to_string(&mut response)?;

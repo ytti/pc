@@ -13,13 +13,18 @@ philosophy.
   - [X] hastebin
   - [X] vpaste
   - [X] fiche (termbin)
-  - [ ] ... more!
+  - [ ] fedora pastebin
+  - [ ] pastebin.com
 - [X] configuration file for providing defaults and server configurations
 - [X] quickly list configured servers, backends, full config, detailed backend
   information
 - [X] comprehensive graceful error handling
 - [X] hardcoded sensible defaults for use without config file
 - [ ] paste url history
+- [ ] optional arguments for servers that support:
+  - [ ] expire time
+  - [ ] public/private
+  - [ ] filetype
 
 
 ## Usage examples

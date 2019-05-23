@@ -30,8 +30,8 @@ pub enum BackendConfig {
 impl Display for BackendConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
-            BackendConfig::Generic { url } => write!(f, "generic:{}", url),
-            BackendConfig::Hastebin { url } => write!(f, "haste:{}", url),
+            BackendConfig::Generic { url } => write!(f, "generic | {}", url),
+            BackendConfig::Hastebin { url } => write!(f, "haste | {}", url),
         }
     }
 }

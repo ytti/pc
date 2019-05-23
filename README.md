@@ -22,9 +22,9 @@ $ pc --server vpaste < code.txt
 http://vpaste.net/example
 
 $ pc list-servers
-rs: (generic) https://paste.rs/
-vpaste: (generic) http://vpaste.net/
-haste: (haste) https://hastebin.com/
+rs => generic | https://paste.rs/
+vpaste => generic | http://vpaste.net/
+haste => haste | https://hastebin.com/
 
 $ pc list-backends
 generic

@@ -8,7 +8,7 @@ philosophy.
 
 ## Features
 
-- [-] supported servers
+- [ ] supported servers
   - [X] generic (paste.rs)
   - [X] hastebin
   - [X] vpaste
@@ -72,11 +72,13 @@ $ pc -c NONE dump-config
 Configuration is via a toml file. The configuration file is determined by the
 following:
 
-1. file given to the `-c` command line arg. (exits with error if this file
-   isn't found)
-2. check `$XDG_CONFIG_HOME/pc/config.toml`
-3. check `$HOME/.config/pc/config.toml`
-5. no files found; hardcoded defaults used
+1. file given to the `-c` command line arg
+  a) if filename is `NONE`, skip to 5
+  b) if file isn't found, exit with error
+2. otherwise use `$XDG_CONFIG_HOME/pc/config.toml` if exists
+3. otherwise use `$HOME/.config/pc/config.toml` if exists
+5. finally, no files found; use hardcoded defaults (see what hardcoded defaults
+   are with `pc -c NONE dump-config`
 
 
 Example config file:

@@ -25,6 +25,9 @@ pub fn build_client(config: BackendConfig) -> Box<dyn PasteClient> {
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub enum BackendConfig {
+    // TODO: these structs should be self contained structs in each backend and enum values simply
+    // wrap them? At the moment information about a backend is split between the backend
+    // file/struct and the config.
     Generic {
         #[serde(deserialize_with = "deserialize_url")]
         #[serde(serialize_with = "serialize_url")]

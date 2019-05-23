@@ -1,27 +1,21 @@
 use std::fmt::{self, Display, Formatter};
 
 use serde::{Deserialize, Serialize};
-use url::Url;
 
 pub mod fiche;
 pub mod generic;
 pub mod haste;
 pub mod vpaste;
 
-pub use self::fiche::Fiche;
-pub use self::haste::Haste;
-pub use self::vpaste::Vpaste;
-use crate::utils::{deserialize_url, serialize_url};
-
 pub const BACKEND_NAMES: &'static [&'static str] =
-    &[generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME];
+    &[generic::NAME, haste::NAME, vpaste::NAME, fiche::NAME];
 
 pub fn info_from_str(name: &str) -> Result<&'static str, String> {
     match name {
         generic::NAME => Ok(generic::info()),
-        Haste::NAME => Ok(Haste::info()),
-        Vpaste::NAME => Ok(Vpaste::info()),
-        Fiche::NAME => Ok(Fiche::info()),
+        haste::NAME => Ok(haste::info()),
+        vpaste::NAME => Ok(vpaste::info()),
+        fiche::NAME => Ok(fiche::info()),
         s => Err(format!("{} is not a valid backend", s)),
     }
 }
@@ -35,30 +29,20 @@ pub enum BackendConfig {
     // wrap them? At the moment information about a backend is split between the backend
     // file/struct and the config.
     Generic(generic::Config),
-    Haste {
-        #[serde(deserialize_with = "deserialize_url")]
-        #[serde(serialize_with = "serialize_url")]
-        url: Url,
-    },
-    Vpaste {
-        #[serde(deserialize_with = "deserialize_url")]
-        #[serde(serialize_with = "serialize_url")]
-        url: Url,
-    },
-    Fiche {
-        domain: String,
-        #[serde(default = "Fiche::default_port")]
-        port: u16,
-    },
+    Haste(haste::Config),
+    Vpaste(vpaste::Config),
+    Fiche(fiche::Config),
 }
 
 impl Display for BackendConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             BackendConfig::Generic(generic::Config { url }) => write!(f, "generic | {}", url),
-            BackendConfig::Haste { url } => write!(f, "haste | {}", url),
-            BackendConfig::Vpaste { url } => write!(f, "vpaste | {}", url),
-            BackendConfig::Fiche { domain, port } => write!(f, "fiche | {}:{}", domain, port),
+            BackendConfig::Haste(haste::Config { url }) => write!(f, "haste | {}", url),
+            BackendConfig::Vpaste(vpaste::Config { url }) => write!(f, "vpaste | {}", url),
+            BackendConfig::Fiche(fiche::Config { domain, port }) => {
+                write!(f, "fiche | {}:{}", domain, port)
+            }
         }
     }
 }

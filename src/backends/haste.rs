@@ -1,26 +1,37 @@
+//! Hastebin backend. Supports any servers running Haste.
+//!
+//! Haste source: <https://github.com/seejohnrun/haste-server>.
+//! Official publicly available server for this is <https://hastebin.com/>.
 use reqwest::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
+use crate::utils::{deserialize_url, serialize_url};
 
-/// Hastebin backend. Supports any servers running Haste
-/// <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
-/// <https://hastebin.com/>.
-pub struct Haste {
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[serde(deny_unknown_fields)]
+#[serde(rename_all = "snake_case")]
+pub struct Config {
+    #[serde(deserialize_with = "deserialize_url")]
+    #[serde(serialize_with = "serialize_url")]
+    pub url: Url,
+}
+
+#[derive(Debug, Clone)]
+pub struct Backend {
     url: Url,
 }
 
-impl Haste {
-    pub const NAME: &'static str = "haste";
+pub const NAME: &'static str = "haste";
 
-    pub fn new(url: Url) -> Self {
-        Self { url }
-    }
+pub fn new(config: Config) -> Backend {
+    Backend { url: config.url }
+}
 
-    pub fn info() -> &'static str {
-        r#"Hastebin backend. Supports any servers running Haste
+pub fn info() -> &'static str {
+    r#"Hastebin backend. Supports any servers running Haste
 <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
 <https://hastebin.com/>.
 
@@ -29,10 +40,9 @@ Example config block:
     [servers.hastebin]
     backend = "haste"
     url = "https://hastebin.com/""#
-    }
 }
 
-impl PasteClient for Haste {
+impl PasteClient for Backend {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
 
@@ -43,6 +53,14 @@ impl PasteClient for Haste {
 
         base_url.set_path(&info.key);
         Ok(base_url)
+    }
+
+    fn info(&self) -> &'static str {
+        info()
+    }
+
+    fn name(&self) -> &'static str {
+        NAME
     }
 }
 

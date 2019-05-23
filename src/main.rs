@@ -71,9 +71,9 @@ impl std::default::Default for Config {
                 );
                 servers.insert(
                     "vpaste".to_owned(),
-                    BackendConfig::Vpaste {
+                    BackendConfig::Vpaste(backends::vpaste::Config {
                         url: Url::parse("http://vpaste.net/").unwrap(),
-                    },
+                    }),
                 );
                 servers
             },

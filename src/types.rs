@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use url::Url;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -23,6 +25,15 @@ pub enum BackendConfig {
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
+}
+
+impl Display for BackendConfig {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        match self {
+            BackendConfig::Generic { url } => write!(f, "generic:{}", url),
+            BackendConfig::Hastebin { url } => write!(f, "haste:{}", url),
+        }
+    }
 }
 
 fn deserialize_url<'de, D>(d: D) -> Result<Url, D::Error>

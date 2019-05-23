@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 use url::Url;
 
-use pc::{build_client, BackendConfig, PasteClient};
+use pc::{build_client, BackendConfig};
 
 #[derive(Debug, StructOpt)]
 /// Command line paste service client.
@@ -31,6 +31,9 @@ enum OptCommand {
     #[structopt(name = "dump-config")]
     /// Print the configuration as currently used.
     DumpConfig,
+    #[structopt(name = "list-servers")]
+    /// List the available configured servers
+    ListServers,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -164,6 +167,12 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
         None => do_paste(opt, config),
         Some(OptCommand::DumpConfig) => {
             println!("{}", toml::to_string(&config)?);
+            Ok(())
+        }
+        Some(OptCommand::ListServers) => {
+            for (key, server) in config.servers.iter() {
+                println!("{} => {}", key, server);
+            }
             Ok(())
         }
     }

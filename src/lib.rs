@@ -4,7 +4,6 @@ mod error;
 mod types;
 
 use crate::backends::{GenericBackend, HastebinBackend};
-use crate::error::PasteResult;
 pub use crate::types::{BackendConfig, PasteClient};
 
 /// Gives you a paste client implementation given config

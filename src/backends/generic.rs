@@ -26,6 +26,8 @@ pub struct Generic {
 }
 
 impl Generic {
+    pub const NAME: &'static str = "generic";
+
     pub fn new(url: Url) -> Self {
         Self { url }
     }

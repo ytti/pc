@@ -17,6 +17,8 @@ pub struct Vpaste {
 ///     backend = "vpaste"
 ///     url = "http://vpaste.net/"
 impl Vpaste {
+    pub const NAME: &'static str = "vpaste";
+
     pub fn new(url: Url) -> Self {
         Self { url }
     }

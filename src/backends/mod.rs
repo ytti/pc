@@ -16,15 +16,15 @@ use crate::utils::{deserialize_url, serialize_url};
 
 pub fn backend_names() -> Vec<&'static str> {
     // NOTE: this should be manually kept up to date with enum variant names above
-    vec!["generic", "haste", "vpaste", "fiche"]
+    vec![Generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME]
 }
 
 pub fn info_from_str(name: &str) -> Result<&'static str, String> {
     match name {
-        "generic" => Ok(Generic::info()),
-        "haste" => Ok(Haste::info()),
-        "vpaste" => Ok(Vpaste::info()),
-        "fiche" => Ok(Fiche::info()),
+        Generic::NAME => Ok(Generic::info()),
+        Haste::NAME => Ok(Haste::info()),
+        Vpaste::NAME => Ok(Vpaste::info()),
+        Fiche::NAME => Ok(Fiche::info()),
         s => Err(format!("{} is not a valid backend", s)),
     }
 }

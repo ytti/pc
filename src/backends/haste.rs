@@ -13,6 +13,8 @@ pub struct Haste {
 }
 
 impl Haste {
+    pub const NAME: &'static str = "haste";
+
     pub fn new(url: Url) -> Self {
         Self { url }
     }

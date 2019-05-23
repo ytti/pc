@@ -22,6 +22,8 @@ pub struct Fiche {
 ///     # default port if missing is 9999
 ///     port = 9999
 impl Fiche {
+    pub const NAME: &'static str = "fiche";
+
     pub fn new(domain: String, port: u16) -> Self {
         Self { domain, port }
     }

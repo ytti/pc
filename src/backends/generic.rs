@@ -9,11 +9,11 @@ use crate::types::PasteClient;
 /// 1. data is uploaded via plain text in the POST request body to the base url.
 /// 2. the generated paste url is returned in plain text as the response body.
 pub struct GenericBackend {
-    url: String,
+    url: Url,
 }
 
 impl GenericBackend {
-    pub fn new(url: String) -> Self {
+    pub fn new(url: Url) -> Self {
         Self { url }
     }
 }
@@ -21,7 +21,7 @@ impl GenericBackend {
 impl PasteClient for GenericBackend {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
-        let text = client.post(&self.url).body(data).send()?.text()?;
+        let text = client.post(self.url.clone()).body(data).send()?.text()?;
         let url = Url::parse(&text)?;
         Ok(url)
     }

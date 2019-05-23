@@ -3,23 +3,22 @@ use std::fmt::{self, Display, Formatter};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-mod fiche;
-mod generic;
-mod haste;
-mod vpaste;
+pub mod fiche;
+pub mod generic;
+pub mod haste;
+pub mod vpaste;
 
 pub use self::fiche::Fiche;
-pub use self::generic::{Generic, GenericConfig};
 pub use self::haste::Haste;
 pub use self::vpaste::Vpaste;
 use crate::utils::{deserialize_url, serialize_url};
 
 pub const BACKEND_NAMES: &'static [&'static str] =
-    &[Generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME];
+    &[generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME];
 
 pub fn info_from_str(name: &str) -> Result<&'static str, String> {
     match name {
-        Generic::NAME => Ok(Generic::info()),
+        generic::NAME => Ok(generic::info()),
         Haste::NAME => Ok(Haste::info()),
         Vpaste::NAME => Ok(Vpaste::info()),
         Fiche::NAME => Ok(Fiche::info()),
@@ -35,11 +34,7 @@ pub enum BackendConfig {
     // TODO: these structs should be self contained structs in each backend and enum values simply
     // wrap them? At the moment information about a backend is split between the backend
     // file/struct and the config.
-    Generic {
-        #[serde(deserialize_with = "deserialize_url")]
-        #[serde(serialize_with = "serialize_url")]
-        url: Url,
-    },
+    Generic(generic::Config),
     Haste {
         #[serde(deserialize_with = "deserialize_url")]
         #[serde(serialize_with = "serialize_url")]
@@ -60,7 +55,7 @@ pub enum BackendConfig {
 impl Display for BackendConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
-            BackendConfig::Generic { url } => write!(f, "generic | {}", url),
+            BackendConfig::Generic(generic::Config { url }) => write!(f, "generic | {}", url),
             BackendConfig::Haste { url } => write!(f, "haste | {}", url),
             BackendConfig::Vpaste { url } => write!(f, "vpaste | {}", url),
             BackendConfig::Fiche { domain, port } => write!(f, "fiche | {}:{}", domain, port),

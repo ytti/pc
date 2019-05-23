@@ -10,10 +10,10 @@ use crate::utils::{deserialize_url, serialize_url};
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
-pub struct GenericConfig {
+pub struct Config {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
-    url: Url,
+    pub url: Url,
 }
 
 /// Generic paste service backend. Supports any pastebin services with the following two
@@ -25,15 +25,14 @@ pub struct Generic {
     url: Url,
 }
 
-impl Generic {
-    pub const NAME: &'static str = "generic";
+pub const NAME: &'static str = "generic";
 
-    pub fn new(url: Url) -> Self {
-        Self { url }
-    }
+pub fn new(config: Config) -> Generic {
+    Generic { url: config.url }
+}
 
-    pub fn info() -> &'static str {
-        r#"Generic paste service backend. Supports any pastebin services with the following two
+pub fn info() -> &'static str {
+    r#"Generic paste service backend. Supports any pastebin services with the following two
 properties:
 
 1. data is uploaded via plain text in the POST request body to the base url.
@@ -44,7 +43,6 @@ Example config block:
     [servers.paste_rs]
     backend = "generic"
     url = "https://paste.rs/""#
-    }
 }
 
 impl PasteClient for Generic {

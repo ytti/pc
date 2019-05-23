@@ -25,9 +25,6 @@ pub fn info_from_str(name: &str) -> Result<&'static str, String> {
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub enum BackendConfig {
-    // TODO: these structs should be self contained structs in each backend and enum values simply
-    // wrap them? At the moment information about a backend is split between the backend
-    // file/struct and the config.
     Generic(generic::Config),
     Haste(haste::Config),
     Vpaste(vpaste::Config),

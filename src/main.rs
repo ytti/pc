@@ -88,36 +88,33 @@ fn read_file(fname: &str) -> io::Result<String> {
     Ok(contents)
 }
 
-fn read_config(fname: &Option<String>) -> Result<Config, Box<dyn Error>> {
-    match fname {
+fn choose_config_file(file_override: &Option<String>) -> Result<Option<String>, Box<dyn Error>> {
+    match file_override {
         Some(s) => {
-            if s.as_str() == "NONE" {
-                Ok(Config::default())
+            // file override, use if exists, else err
+            if s == "NONE" {
+                Ok(None)
             } else {
-                let data = read_file(&s)?;
-                let config = toml::from_str(&data)?;
-                Ok(config)
+                if Path::new(s).exists() {
+                    Ok(Some(s.to_owned()))
+                } else {
+                    Err(format!("config file not found: {:?}", s).into())
+                }
             }
         }
         None => {
+            // no file override; find a file in the default locations
             let config_dir = match env::var("XDG_CONFIG_HOME") {
                 Ok(val) => val,
-                Err(_) => match env::var("HOME") {
-                    Ok(val) => format!("{}/.config", val),
-                    Err(e) => {
-                        return Err(Box::new(e));
-                    }
-                },
+                Err(_) => format!("{}/.config", env::var("HOME")?),
             };
 
             let config_file = format!("{}/pc/config.toml", config_dir);
 
             if Path::new(&config_file).exists() {
-                let data = read_file(&config_file)?;
-                let config = toml::from_str(&data)?;
-                Ok(config)
+                Ok(Some(config_file))
             } else {
-                Ok(Config::default())
+                Ok(None)
             }
         }
     }
@@ -177,9 +174,25 @@ To use this, add a server block under the heading [servers.{0}] in the config to
     Ok(())
 }
 
+fn read_config(path: &str) -> Result<Config, Box<dyn Error>> {
+    let data = read_file(path)?;
+    let config = toml::from_str(&data)?;
+    Ok(config)
+}
+
 fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
-    // TODO: choose config file in separate step to be able to output this for debugging info
-    let config = read_config(&opt.config_file)?;
+    let fname: Option<String> = choose_config_file(&opt.config_file)?;
+
+    let config = match fname {
+        Some(path) => match read_config(&path) {
+            Ok(config) => config,
+            Err(e) => {
+                eprintln!("error with config file: {}", path);
+                return Err(e);
+            }
+        },
+        None => Config::default(),
+    };
 
     match opt.cmd {
         None => do_paste(opt, config),

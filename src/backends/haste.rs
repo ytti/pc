@@ -18,7 +18,7 @@ impl HasteBackend {
     }
 
     pub fn info() -> &'static str {
-r#"Hastebin backend. Supports any servers running Haste
+        r#"Hastebin backend. Supports any servers running Haste
 <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
 <https://hastebin.com/>.
 

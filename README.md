@@ -11,7 +11,7 @@ philosophy.
 - [-] supported servers
   - [X] generic
   - [X] hastebin
-  - [ ] vpaste
+  - [X] vpaste
   - [ ] ... more!
 - [X] configuration file for providing defaults and server configurations
 - [X] quickly list configured servers, backends, full config, detailed backend
@@ -98,11 +98,11 @@ url = "https://hastebin.com/"
 
 ## Supported servers
 
-| server                                              | backend                | example url           |
-| ------                                              | -------                | ---------------       |
-| [vpaste](http://pileus.org/tools/vpaste)            | vpaste (unimplemented) | http://vpaste.net/    |
-| [Haste](https://github.com/seejohnrun/haste-server) | haste                  | https://hastebin.com/ |
-| [paste.rs](https://paste.rs/web)                    | generic                | https://paste.rs/     |
+| server                                              | backend | example url           |
+| ------                                              | ------- | ---------------       |
+| [vpaste](http://pileus.org/tools/vpaste)            | vpaste  | http://vpaste.net/    |
+| [Haste](https://github.com/seejohnrun/haste-server) | haste   | https://hastebin.com/ |
+| [paste.rs](https://paste.rs/web)                    | generic | https://paste.rs/     |
 
 
 ## Development

@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 use url::Url;
 
-use pc::{build_client, BackendConfig, backends};
+use pc::{backends, build_client, BackendConfig};
 
 #[derive(Debug, StructOpt)]
 /// Command line paste service client.
@@ -67,6 +67,12 @@ impl std::default::Default for Config {
                     "paste_rs".to_owned(),
                     BackendConfig::Generic {
                         url: Url::parse("https://paste.rs/").unwrap(),
+                    },
+                );
+                servers.insert(
+                    "vpaste".to_owned(),
+                    BackendConfig::Vpaste {
+                        url: Url::parse("http://vpaste.net/").unwrap(),
                     },
                 );
                 servers

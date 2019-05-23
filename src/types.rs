@@ -24,6 +24,11 @@ pub enum BackendConfig {
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
+    Vpaste {
+        #[serde(deserialize_with = "deserialize_url")]
+        #[serde(serialize_with = "serialize_url")]
+        url: Url,
+    },
 }
 
 impl Display for BackendConfig {
@@ -31,6 +36,7 @@ impl Display for BackendConfig {
         match self {
             BackendConfig::Generic { url } => write!(f, "generic | {}", url),
             BackendConfig::Haste { url } => write!(f, "haste | {}", url),
+            BackendConfig::Vpaste { url } => write!(f, "vpaste | {}", url),
         }
     }
 }

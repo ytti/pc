@@ -20,18 +20,25 @@ pub enum BackendConfig {
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
-    Hastebin {
+    Haste {
         #[serde(deserialize_with = "deserialize_url")]
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
 }
 
+impl BackendConfig {
+    pub fn backend_names() -> Vec<&'static str> {
+        // NOTE: this should be manually kept up to date with enum variant names above
+        vec!["generic", "haste"]
+    }
+}
+
 impl Display for BackendConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             BackendConfig::Generic { url } => write!(f, "generic | {}", url),
-            BackendConfig::Hastebin { url } => write!(f, "haste | {}", url),
+            BackendConfig::Haste { url } => write!(f, "haste | {}", url),
         }
     }
 }

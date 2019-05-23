@@ -34,6 +34,9 @@ enum OptCommand {
     #[structopt(name = "list-servers")]
     /// List the available configured servers
     ListServers,
+    #[structopt(name = "list-backends")]
+    /// List the available backends
+    ListBackends,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -172,6 +175,12 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
         Some(OptCommand::ListServers) => {
             for (key, server) in config.servers.iter() {
                 println!("{} => {}", key, server);
+            }
+            Ok(())
+        }
+        Some(OptCommand::ListBackends) => {
+            for name in BackendConfig::backend_names() {
+                println!("{}", name);
             }
             Ok(())
         }

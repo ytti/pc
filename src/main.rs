@@ -190,7 +190,7 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Some(OptCommand::ListBackends) => {
-            for name in backends::backend_names() {
+            for name in backends::BACKEND_NAMES {
                 println!("{}", name);
             }
             Ok(())

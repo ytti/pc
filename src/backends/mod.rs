@@ -14,10 +14,8 @@ pub use self::haste::Haste;
 pub use self::vpaste::Vpaste;
 use crate::utils::{deserialize_url, serialize_url};
 
-pub fn backend_names() -> Vec<&'static str> {
-    // NOTE: this should be manually kept up to date with enum variant names above
-    vec![Generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME]
-}
+pub const BACKEND_NAMES: &'static [&'static str] =
+    &[Generic::NAME, Haste::NAME, Vpaste::NAME, Fiche::NAME];
 
 pub fn info_from_str(name: &str) -> Result<&'static str, String> {
     match name {

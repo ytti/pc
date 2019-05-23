@@ -17,6 +17,20 @@ impl GenericBackend {
     pub fn new(url: Url) -> Self {
         Self { url }
     }
+
+    pub fn info() -> &'static str {
+r#"Generic paste service backend. Supports any pastebin services with the following two
+properties:
+
+1. data is uploaded via plain text in the POST request body to the base url.
+2. the generated paste url is returned in plain text as the response body.
+
+Example config block:
+
+    [servers.paste_rs]
+    backend = "generic"
+    url = "https://paste.rs/""#
+    }
 }
 
 impl PasteClient for GenericBackend {

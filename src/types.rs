@@ -1,13 +1,12 @@
 use std::fmt::{self, Display, Formatter};
 
-use url::Url;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use url::Url;
 
 use crate::error::PasteResult;
 
 pub trait PasteClient {
     fn paste(&self, data: String) -> PasteResult<Url>;
-    // TODO: help() function to return a help message as a string
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -25,13 +24,6 @@ pub enum BackendConfig {
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
-}
-
-impl BackendConfig {
-    pub fn backend_names() -> Vec<&'static str> {
-        // NOTE: this should be manually kept up to date with enum variant names above
-        vec!["generic", "haste"]
-    }
 }
 
 impl Display for BackendConfig {

@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 use url::Url;
 
-use pc::{build_client, BackendConfig};
+use pc::{build_client, BackendConfig, backends};
 
 #[derive(Debug, StructOpt)]
 /// Command line paste service client.
@@ -37,6 +37,9 @@ enum OptCommand {
     #[structopt(name = "list-backends")]
     /// List the available backends
     ListBackends,
+    #[structopt(name = "backend-info")]
+    /// Print more information about a backend
+    BackendInfo { name: String },
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -179,11 +182,18 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Some(OptCommand::ListBackends) => {
-            for name in BackendConfig::backend_names() {
+            for name in backends::backend_names() {
                 println!("{}", name);
             }
             Ok(())
         }
+        Some(OptCommand::BackendInfo { name }) => match backends::info_from_str(&name) {
+            Ok(s) => {
+                println!("{}", s);
+                Ok(())
+            }
+            Err(s) => Err(s.into()),
+        },
     }
 }
 

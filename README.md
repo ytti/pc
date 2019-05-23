@@ -9,9 +9,10 @@ philosophy.
 ## Features
 
 - [-] supported servers
-  - [X] generic
+  - [X] generic (paste.rs)
   - [X] hastebin
   - [X] vpaste
+  - [X] fiche (termbin)
   - [ ] ... more!
 - [X] configuration file for providing defaults and server configurations
 - [X] quickly list configured servers, backends, full config, detailed backend
@@ -98,11 +99,12 @@ url = "https://hastebin.com/"
 
 ## Supported servers
 
-| server                                              | backend | example url           |
+| server software                                     | backend | example instance      |
 | ------                                              | ------- | ---------------       |
 | [vpaste](http://pileus.org/tools/vpaste)            | vpaste  | http://vpaste.net/    |
 | [Haste](https://github.com/seejohnrun/haste-server) | haste   | https://hastebin.com/ |
 | [paste.rs](https://paste.rs/web)                    | generic | https://paste.rs/     |
+| [fiche](https://github.com/solusipse/fiche)         | fiche   | https://termbin.com/  |
 
 
 ## Development

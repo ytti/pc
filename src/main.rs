@@ -164,6 +164,7 @@ Define one in the config file like:
     };
 
     let data = read_stdin()?;
+
     let client = build_client(client_config);
     let paste_url = client.paste(data)?;
 

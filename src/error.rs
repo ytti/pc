@@ -5,6 +5,7 @@ use std::fmt::{self, Display, Formatter};
 pub enum PasteError {
     Reqwest(reqwest::Error),
     Url(url::ParseError),
+    IO(std::io::Error),
 }
 
 pub type PasteResult<T> = Result<T, PasteError>;
@@ -20,6 +21,13 @@ impl From<url::ParseError> for PasteError {
         PasteError::Url(err)
     }
 }
+
+impl From<std::io::Error> for PasteError {
+    fn from(err: std::io::Error) -> Self {
+        PasteError::IO(err)
+    }
+}
+
 impl Display for PasteError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
@@ -28,6 +36,7 @@ impl Display for PasteError {
             match self {
                 PasteError::Reqwest(err) => format!("Request error: {}", err),
                 PasteError::Url(err) => format!("Url error: {}", err),
+                PasteError::IO(err) => format!("IO error: {}", err),
             }
         )
     }
@@ -38,6 +47,7 @@ impl Error for PasteError {
         match self {
             PasteError::Reqwest(err) => Some(err),
             PasteError::Url(err) => Some(err),
+            PasteError::IO(err) => Some(err),
         }
     }
 }

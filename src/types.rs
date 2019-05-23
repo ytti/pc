@@ -29,6 +29,10 @@ pub enum BackendConfig {
         #[serde(serialize_with = "serialize_url")]
         url: Url,
     },
+    Fiche {
+        domain: String,
+        port: u16,
+    },
 }
 
 impl Display for BackendConfig {
@@ -37,6 +41,7 @@ impl Display for BackendConfig {
             BackendConfig::Generic { url } => write!(f, "generic | {}", url),
             BackendConfig::Haste { url } => write!(f, "haste | {}", url),
             BackendConfig::Vpaste { url } => write!(f, "vpaste | {}", url),
+            BackendConfig::Fiche { domain, port } => write!(f, "fiche | {}:{}", domain, port),
         }
     }
 }

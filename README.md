@@ -5,8 +5,20 @@ server. It supports many different pastebin style servers, and is configurable.
 It aims to be simple, work with stdin/stdout, and adhere to the unix
 philosophy.
 
-NOTE: this is under early development. Not all the features listed in the
-readme are implemented yet.
+
+## Features
+
+- [-] supported servers
+  - [X] generic
+  - [X] hastebin
+  - [ ] vpaste
+  - [ ] ... more!
+- [X] configuration file for providing defaults and server configurations
+- [X] quickly list configured servers, backends, full config, detailed backend
+  information
+- [X] comprehensive graceful error handling
+- [X] hardcoded sensible defaults for use without config file
+- [ ] paste url history
 
 
 ## Usage examples
@@ -48,8 +60,6 @@ $ pc dump-config
 $ pc -c NONE dump-config
 <default config as toml>
 ```
-
-TODO: consider paste|url history
 
 ## Configuration
 

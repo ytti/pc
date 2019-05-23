@@ -167,6 +167,7 @@ Define one in the config file like:
 }
 
 fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
+    // TODO: choose config file in separate step to be able to output this for debugging info
     let config = read_config(&opt.config_file)?;
 
     match opt.cmd {

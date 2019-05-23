@@ -7,6 +7,8 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
+// XXX: how portable is a reqwest::Url? maybe depend on url::...?
+use reqwest::Url;
 
 use pc::{build_client, BackendConfig, PasteClient};
 
@@ -56,7 +58,7 @@ impl std::default::Default for Config {
                 servers.insert(
                     "paste_rs".to_owned(),
                     BackendConfig::Generic {
-                        url: "https://paste.rs/".to_owned(),
+                        url: Url::parse("https://paste.rs/").unwrap(),
                     },
                 );
                 servers
@@ -117,7 +119,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn Error>> {
+fn do_paste(opt: Opt, mut config: Config) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.len() < 1 {
         return Err(r#"No servers defined in configuration!
@@ -138,7 +140,8 @@ Define one in the config file like:
             .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned())
     });
 
-    let client_config: &BackendConfig = match config.servers.get(&server_choice) {
+    // we're removing from the config here because we want an owned object, not a reference
+    let client_config: BackendConfig = match config.servers.remove(&server_choice) {
         Some(choice) => choice,
         None => {
             // TODO: more helpful error message
@@ -147,7 +150,7 @@ Define one in the config file like:
     };
 
     let data = read_stdin()?;
-    let client = build_client(client_config)?;
+    let client = build_client(client_config);
     let paste_url = client.paste(data)?;
 
     // send the url to stdout!

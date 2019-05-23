@@ -158,7 +158,7 @@ Define one in the config file like:
     let client_config: BackendConfig = match config.servers.get(&server_choice) {
         Some(choice) => choice.to_owned(),
         None => {
-            // TODO: more helpful error message
+            // TODO: more helpful error message with example
             return Err(format!("No corresponding server config for {}", server_choice).into());
         }
     };

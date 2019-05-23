@@ -100,6 +100,12 @@ url = "https://paste.rs/"
 [servers.haste]
 backend = "haste"
 url = "https://hastebin.com/"
+
+[servers.termbin]
+backend = "fiche"
+domain = "termbin.com"
+# port is optional; defaults to 9999
+port = 9999
 ```
 
 ## Supported servers

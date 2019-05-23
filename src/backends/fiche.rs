@@ -26,6 +26,10 @@ impl Fiche {
         Self { domain, port }
     }
 
+    pub fn default_port() -> u16 {
+        9999
+    }
+
     pub fn info() -> &'static str {
         r#"Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
 termbin.com)

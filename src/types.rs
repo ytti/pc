@@ -1,4 +1,4 @@
-use reqwest::Url;
+use url::Url;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::error::PasteResult;

@@ -1,4 +1,5 @@
-use reqwest::{Client, Url};
+use reqwest::Client;
+use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;

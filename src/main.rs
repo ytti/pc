@@ -7,8 +7,7 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
-// XXX: how portable is a reqwest::Url? maybe depend on url::...?
-use reqwest::Url;
+use url::Url;
 
 use pc::{build_client, BackendConfig, PasteClient};
 

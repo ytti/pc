@@ -1,4 +1,5 @@
-use reqwest::{Client, Url};
+use reqwest::Client;
+use url::Url;
 use serde::Deserialize;
 
 use crate::error::PasteResult;

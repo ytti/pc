@@ -1,12 +1,12 @@
-use reqwest::Client;
 use reqwest::multipart::Form;
+use reqwest::Client;
 use serde::Serialize;
 use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
 
-pub struct VpasteBackend {
+pub struct Vpaste {
     url: Url,
 }
 
@@ -17,7 +17,7 @@ pub struct VpasteBackend {
 ///     [servers.vp]
 ///     backend = "vpaste"
 ///     url = "http://vpaste.net/"
-impl VpasteBackend {
+impl Vpaste {
     pub fn new(url: Url) -> Self {
         Self { url }
     }
@@ -33,14 +33,16 @@ Example config block:
     }
 }
 
-impl PasteClient for VpasteBackend {
+impl PasteClient for Vpaste {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let form = Form::new().text("text", data);
-        let res = Client::new().post(self.url.clone()).multipart(form).send()?;
+        let res = Client::new()
+            .post(self.url.clone())
+            .multipart(form)
+            .send()?;
         Ok(res.url().to_owned())
     }
 }
-
 
 #[derive(Debug, Serialize)]
 struct VpasteFormParams {

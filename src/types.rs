@@ -9,7 +9,7 @@ pub trait PasteClient {
     fn paste(&self, data: String) -> PasteResult<Url>;
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(tag = "backend")]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]

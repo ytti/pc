@@ -133,7 +133,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(opt: Opt, mut config: Config) -> Result<(), Box<dyn Error>> {
+fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.len() < 1 {
         return Err(r#"No servers defined in configuration!
@@ -155,8 +155,8 @@ Define one in the config file like:
     });
 
     // we're removing from the config here because we want an owned object, not a reference
-    let client_config: BackendConfig = match config.servers.remove(&server_choice) {
-        Some(choice) => choice,
+    let client_config: BackendConfig = match config.servers.get(&server_choice) {
+        Some(choice) => choice.to_owned(),
         None => {
             // TODO: more helpful error message
             return Err(format!("No corresponding server config for {}", server_choice).into());

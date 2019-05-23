@@ -8,11 +8,11 @@ use crate::types::PasteClient;
 /// Hastebin backend. Supports any servers running Haste
 /// <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
 /// <https://hastebin.com/>.
-pub struct HasteBackend {
+pub struct Haste {
     url: Url,
 }
 
-impl HasteBackend {
+impl Haste {
     pub fn new(url: Url) -> Self {
         Self { url }
     }
@@ -30,7 +30,7 @@ Example config block:
     }
 }
 
-impl PasteClient for HasteBackend {
+impl PasteClient for Haste {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
 

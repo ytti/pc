@@ -5,46 +5,11 @@ use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
 
+use clap::{App, AppSettings, Arg, SubCommand};
 use serde::{Deserialize, Serialize};
-use structopt::StructOpt;
 use url::Url;
 
 use pc::{backends, build_client, BackendConfig};
-
-#[derive(Debug, StructOpt)]
-/// Command line paste service client.
-struct Opt {
-    /// Use a custom config file
-    #[structopt(long = "config", short = "c")]
-    config_file: Option<String>,
-
-    /// Select which user-defined server to use
-    #[structopt(long = "server", short = "s")]
-    server: Option<String>,
-
-    /// Set a histfile to log urls to
-    #[structopt(long = "histfile", short = "H")]
-    histfile: Option<String>,
-
-    #[structopt(subcommand)]
-    cmd: Option<OptCommand>,
-}
-
-#[derive(Debug, StructOpt)]
-enum OptCommand {
-    #[structopt(name = "dump-config")]
-    /// Print the configuration as currently used.
-    DumpConfig,
-    #[structopt(name = "list-servers")]
-    /// List the available configured servers
-    ListServers,
-    #[structopt(name = "list-backends")]
-    /// List the available backends
-    ListBackends,
-    #[structopt(name = "backend-info")]
-    /// Print more information about a backend
-    BackendInfo { name: String },
-}
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -61,15 +26,6 @@ struct MainConfig {
 }
 
 impl Config {
-    fn with_server_override(self, new_server: Option<String>) -> Self {
-        Config {
-            main: MainConfig {
-                server: new_server.or(self.main.server),
-                ..self.main
-            },
-            ..self
-        }
-    }
     fn with_histfile_override(self, new_histfile: Option<String>) -> Self {
         Config {
             main: MainConfig {
@@ -225,9 +181,75 @@ fn read_config(path: &str) -> Result<Config, Box<dyn Error>> {
     Ok(config)
 }
 
-fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
-    let fname: Option<String> = choose_config_file(&opt.config_file)?;
+fn run() -> Result<(), Box<dyn Error>> {
+    let app = App::new("pc")
+        .version("0.1.0")
+        .author("author")
+        .setting(AppSettings::AllowExternalSubcommands)
+        .arg(
+            Arg::with_name("config")
+                .short("c")
+                .long("config")
+                .value_name("FILE")
+                .help("Set a custom config file")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("histfile")
+                .short("H")
+                .long("histfile")
+                .value_name("FILE")
+                .help("Set a custom file to log to")
+                .takes_value(true),
+        )
+        .subcommand(SubCommand::with_name("list").about("List info about available server blocks"))
+        .subcommand(SubCommand::with_name("list-backends").about("List available backends"))
+        .subcommand(
+            SubCommand::with_name("dump-config").about("Dump current config serialized as toml"),
+        )
+        .subcommand(
+            SubCommand::with_name("show-backend")
+                .arg(Arg::with_name("backend"))
+                .about("Show information about a backend"),
+        );
 
+    let matches = app.get_matches();
+
+    let op: Op = match matches.subcommand() {
+        ("list", _m) => Op::List,
+        ("dump-config", _m) => Op::DumpConfig,
+        ("list-backends", _m) => Op::ListBackends,
+        ("show-backend", Some(m)) => {
+            Op::ShowBackend(m.value_of("backend").expect("required param").to_owned())
+        }
+        (external, Some(ext_m)) => {
+            if matches.is_present("op") {
+                return Err("Extra commands can't be used when in paste mode"
+                    .to_owned()
+                    .into());
+            }
+            let ext_args: Vec<String> =
+                ext_m.values_of("").unwrap().map(|s| s.to_owned()).collect();
+
+            Op::Paste {
+                server: Some(external.to_owned()),
+                server_args: ext_args,
+            }
+        }
+        ("", None) => Op::Paste {
+            server: None,
+            server_args: vec![],
+        },
+        _ => unreachable!(),
+    };
+
+    let opt = Opt {
+        histfile: matches.value_of("histfile").map(|s| s.to_owned()),
+        config_file: matches.value_of("config").map(|s| s.to_owned()),
+        op,
+    };
+
+    let fname: Option<String> = choose_config_file(&opt.config_file)?;
     let config = match fname {
         Some(path) => match read_config(&path) {
             Ok(config) => config,
@@ -239,29 +261,39 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
         None => Config::default(),
     };
 
-    let config = config
-        .with_server_override(opt.server)
-        .with_histfile_override(opt.histfile);
+    let config = config.with_histfile_override(opt.histfile);
 
-    match opt.cmd {
-        None => do_paste(config),
-        Some(OptCommand::DumpConfig) => {
+    match opt.op {
+        Op::Paste {
+            server,
+            server_args,
+        } => do_paste(config),
+        Op::DumpConfig => {
             println!("{}", toml::to_string(&config)?);
             Ok(())
         }
-        Some(OptCommand::ListServers) => {
+        Op::List => {
             for (key, server) in config.servers.iter() {
-                println!("{} => {}", key, server);
+                println!(
+                    "{0} => {1}{2}",
+                    key,
+                    server,
+                    if &config.main.server == &Some(key.to_owned()) {
+                        " [default]"
+                    } else {
+                        ""
+                    }
+                );
             }
             Ok(())
         }
-        Some(OptCommand::ListBackends) => {
+        Op::ListBackends => {
             for name in backends::BACKEND_NAMES {
                 println!("{}", name);
             }
             Ok(())
         }
-        Some(OptCommand::BackendInfo { name }) => match backends::info_from_str(&name) {
+        Op::ShowBackend(name) => match backends::info_from_str(&name) {
             Ok(s) => {
                 println!("{}", s);
                 Ok(())
@@ -271,10 +303,27 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
     }
 }
 
-fn main() {
-    let opt = Opt::from_args();
+#[derive(Debug, Clone)]
+struct Opt {
+    config_file: Option<String>,
+    op: Op,
+    histfile: Option<String>,
+}
 
-    std::process::exit(match run(opt) {
+#[derive(Debug, Clone)]
+enum Op {
+    Paste {
+        server: Option<String>,
+        server_args: Vec<String>,
+    },
+    List,
+    ShowBackend(String),
+    ListBackends,
+    DumpConfig,
+}
+
+fn main() {
+    std::process::exit(match run() {
         Err(err) => {
             eprintln!("{}", err);
             1

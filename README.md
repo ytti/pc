@@ -40,11 +40,14 @@ https://paste.rs/saC
 $ pc --help
 <usage instructions>
 
-$ pc --server vpaste < code.txt
+$ pc vpaste < code.txt
 http://vpaste.net/example
 
-$ pc list-servers
-rs => generic | https://paste.rs/
+$ pc fedora --title "foo debug log" < debug.log
+https://paste.fedoraproject.org/paste/7Taaazf88VimfqOnriOsFg
+
+$ pc list
+rs => generic | https://paste.rs/ [default]
 vpaste => generic | http://vpaste.net/
 haste => haste | https://hastebin.com/
 
@@ -53,7 +56,7 @@ generic
 haste
 vpaste
 
-$ pc backend-info generic
+$ pc show-backend generic
 The generic backend works for any pastebin service that accepts the data in the
 body of a POST request and returns the access url in plain text in the response
 body.

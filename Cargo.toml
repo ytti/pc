@@ -5,8 +5,9 @@ authors = ["Samuel Walladge <samuel@swalladge.id.au>"]
 edition = "2018"
 
 [dependencies]
-structopt = "0.2.15"
+clap = "2.33.0"
 reqwest = "0.9.17"
-toml = "0.5.1"
 serde = { version = "1.0", features = ["derive"] }
+structopt = "0.2.15"
+toml = "0.5.1"
 url = "1.7.2"

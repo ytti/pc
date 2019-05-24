@@ -26,6 +26,19 @@ struct MainConfig {
 }
 
 impl Config {
+    fn with_server_override(self, new_server: Option<String>) -> Self {
+        Config {
+            main: MainConfig {
+                server: match new_server {
+                    Some(ref c) if c.as_str() == "NONE" => None,
+                    _ => new_server.or(self.main.server),
+                },
+                ..self.main
+            },
+            ..self
+        }
+    }
+
     fn with_histfile_override(self, new_histfile: Option<String>) -> Self {
         Config {
             main: MainConfig {
@@ -116,7 +129,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(config: Config) -> Result<(), Box<dyn Error>> {
+fn do_paste(config: Config, server_args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.is_empty() {
         return Err(r#"No servers defined in configuration!
@@ -128,15 +141,14 @@ Define one in the config file like:
             .into());
     }
 
-    // -s cli arg > config file > random server
+    // config file if set, otherwise arbitrary server
     let server_choice: String = config
         .main
         .server
         .clone()
         .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned());
 
-    // we're removing from the config here because we want an owned object, not a reference
-    let client_config: BackendConfig = match config.servers.get(&server_choice) {
+    let backend_config: BackendConfig = match config.servers.get(&server_choice) {
         Some(choice) => choice.to_owned(),
         None => {
             return Err(format!(
@@ -148,9 +160,13 @@ To use this, add a server block under the heading [servers.{0}] in the config to
         }
     };
 
+    // TODO: here is where we merge in the server_args with the backend_config
+    // - this should be implemented as a clap app in each backend (on the pasteclient trait)?
+    // - server_args should override those set in the config (backend_config)
+
     let data = read_stdin()?;
 
-    let client = build_client(client_config);
+    let client = build_client(backend_config);
     let paste_url = client.paste(data)?;
 
     // send the url to stdout!
@@ -228,8 +244,10 @@ fn run() -> Result<(), Box<dyn Error>> {
                     .to_owned()
                     .into());
             }
-            let ext_args: Vec<String> =
-                ext_m.values_of("").unwrap().map(|s| s.to_owned()).collect();
+            let ext_args: Vec<String> = match ext_m.values_of("") {
+                Some(values) => values.map(|s| s.to_owned()).collect(),
+                None => vec![],
+            };
 
             Op::Paste {
                 server: Some(external.to_owned()),
@@ -261,18 +279,16 @@ fn run() -> Result<(), Box<dyn Error>> {
         None => Config::default(),
     };
 
-    let config = config.with_histfile_override(opt.histfile);
-
     match opt.op {
         Op::Paste {
             server,
             server_args,
         } => {
-            // TODO: merge config and paste args and send to do_paste.
-            // need more complex stuff to allow each backend to provide its own clap app which we
-            // can pass the server_args to.
-            do_paste(config)
-        },
+            let config = config
+                .with_server_override(server)
+                .with_histfile_override(opt.histfile);
+            do_paste(config, server_args)
+        }
         Op::DumpConfig => {
             println!("{}", toml::to_string(&config)?);
             Ok(())

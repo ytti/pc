@@ -7,6 +7,7 @@ use std::path::Path;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use serde::{Deserialize, Serialize};
+use structopt::StructOpt;
 use url::Url;
 
 use pc::{backends, build_client, BackendConfig};
@@ -164,6 +165,22 @@ To use this, add a server block under the heading [servers.{0}] in the config to
     // - this should be implemented as a clap app in each backend (on the pasteclient trait)?
     // - server_args should override those set in the config (backend_config)
 
+    // NOTE: poc for getting a server-block specific arg parsing.
+    // currently hardcoded to modern_paste...
+    let opt = match backends::modern_paste::Opt::from_iter_safe(server_args) {
+        Ok(opt) => opt,
+        Err(e) => {
+            match e.kind {
+                clap::ErrorKind::HelpDisplayed => {
+                    eprintln!("Config for this server block:\n\n{}", toml::to_string(&backend_config)?);
+                }
+                _ => {}
+            }
+            e.exit();
+        }
+    };
+    dbg!(&opt);
+
     let data = read_stdin()?;
 
     let client = build_client(backend_config);
@@ -266,6 +283,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         config_file: matches.value_of("config").map(|s| s.to_owned()),
         op,
     };
+    dbg!(&opt);
 
     let fname: Option<String> = choose_config_file(&opt.config_file)?;
     let config = match fname {

@@ -1,9 +1,6 @@
-//! Modern Paste backend.
-//!
-//! modern-paste source: <https://github.com/LINKIWI/modern-paste/>.
-//! Example popular instance of this is <https://paste.fedoraproject.org/>.
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use structopt::StructOpt;
 use url::Url;
 
 use crate::error::PasteResult;
@@ -17,6 +14,15 @@ pub struct Config {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
+}
+
+#[derive(Debug, StructOpt)]
+#[structopt(name = "modern_paste", about = "modern_paste backend")]
+#[structopt(raw(setting = "clap::AppSettings::NoBinaryName"))]
+pub struct Opt {
+    /// Title for the paste
+    #[structopt(short = "t", long = "title")]
+    title: Option<String>,
 }
 
 #[derive(Debug, Clone)]

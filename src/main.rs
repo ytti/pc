@@ -22,6 +22,10 @@ struct Opt {
     #[structopt(long = "server", short = "s")]
     server: Option<String>,
 
+    /// Set a histfile to log urls to
+    #[structopt(long = "histfile", short = "H")]
+    histfile: Option<PathBuf>,
+
     #[structopt(subcommand)]
     cmd: Option<OptCommand>,
 }
@@ -54,6 +58,27 @@ struct Config {
 struct MainConfig {
     server: Option<String>,
     histfile: Option<PathBuf>,
+}
+
+impl Config {
+    fn with_server_override(self, new_server: Option<String>) -> Self {
+        Config {
+            main: MainConfig {
+                server: new_server.or(self.main.server),
+                ..self.main
+            },
+            ..self
+        }
+    }
+    fn with_histfile_override(self, new_histfile: Option<PathBuf>) -> Self {
+        Config {
+            main: MainConfig {
+                histfile: new_histfile.or(self.main.histfile),
+                ..self.main
+            },
+            ..self
+        }
+    }
 }
 
 impl std::default::Default for Config {
@@ -132,7 +157,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(opt: Opt, config: Config) -> Result<(), Box<dyn Error>> {
+fn do_paste(config: Config) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.is_empty() {
         return Err(r#"No servers defined in configuration!
@@ -145,13 +170,11 @@ Define one in the config file like:
     }
 
     // -s cli arg > config file > random server
-    let server_choice: String = opt.server.unwrap_or_else(|| {
-        config
-            .main
-            .server
-            .clone()
-            .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned())
-    });
+    let server_choice: String = config
+        .main
+        .server
+        .clone()
+        .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned());
 
     // we're removing from the config here because we want an owned object, not a reference
     let client_config: BackendConfig = match config.servers.get(&server_choice) {
@@ -213,8 +236,12 @@ fn run(opt: Opt) -> Result<(), Box<dyn Error>> {
         None => Config::default(),
     };
 
+    let config = config
+        .with_server_override(opt.server)
+        .with_histfile_override(opt.histfile);
+
     match opt.cmd {
-        None => do_paste(opt, config),
+        None => do_paste(config),
         Some(OptCommand::DumpConfig) => {
             println!("{}", toml::to_string(&config)?);
             Ok(())

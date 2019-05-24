@@ -52,7 +52,7 @@ struct Config {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 struct MainConfig {
-    default: Option<String>,
+    server: Option<String>,
     histfile: Option<PathBuf>,
 }
 
@@ -60,7 +60,7 @@ impl std::default::Default for Config {
     fn default() -> Self {
         Config {
             main: MainConfig {
-                default: Some("paste_rs".to_owned()),
+                server: Some("paste_rs".to_owned()),
                 histfile: None,
             },
             servers: {
@@ -148,7 +148,7 @@ Define one in the config file like:
     let server_choice: String = opt.server.unwrap_or_else(|| {
         config
             .main
-            .default
+            .server
             .clone()
             .unwrap_or_else(|| config.servers.keys().next().unwrap().to_owned())
     });

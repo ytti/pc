@@ -90,7 +90,7 @@ Example config file:
 ```toml
 [main]
 # optional; if missing, will use random server entry
-default = "rs"
+server = "rs"
 
 # optional; if missing, will not log url history.
 # if set, will append url of successful pastes to this file, one per line,

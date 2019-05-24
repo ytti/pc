@@ -13,7 +13,7 @@ philosophy.
   - [X] hastebin
   - [X] vpaste
   - [X] fiche (termbin)
-  - [ ] fedora pastebin
+  - [X] fedora pastebin
   - [ ] pastebin.com
 - [X] configuration file for providing defaults and server configurations
 - [X] quickly list configured servers, backends, full config, detailed backend
@@ -25,7 +25,11 @@ philosophy.
   - [ ] expire time
   - [ ] public/private
   - [ ] filetype
+  - [ ] password protected
+  - [ ] title
 
+TODO: work out nice api for showing which server backends support which
+arguments
 
 ## Usage examples
 
@@ -108,6 +112,10 @@ backend = "fiche"
 domain = "termbin.com"
 # port is optional; defaults to 9999
 port = 9999
+
+[servers.fedora]
+backend = "modern_paste"
+url = "https://paste.fedoraproject.org/"
 ```
 
 ## Supported servers

@@ -4,7 +4,7 @@ mod types;
 mod utils;
 
 pub use crate::backends::BackendConfig;
-pub use crate::backends::{fiche, generic, haste, vpaste};
+pub use crate::backends::{fiche, generic, haste, modern_paste, vpaste};
 pub use crate::types::PasteClient;
 
 /// Provides a paste client implementation given config
@@ -14,5 +14,6 @@ pub fn build_client(config: BackendConfig) -> Box<dyn PasteClient> {
         BackendConfig::Haste(config) => Box::new(haste::new(config)),
         BackendConfig::Vpaste(config) => Box::new(vpaste::new(config)),
         BackendConfig::Fiche(config) => Box::new(fiche::new(config)),
+        BackendConfig::ModernPaste(config) => Box::new(modern_paste::new(config)),
     }
 }

@@ -6,9 +6,16 @@ pub enum PasteError {
     Reqwest(reqwest::Error),
     Url(url::ParseError),
     IO(std::io::Error),
+    Message(String),
 }
 
 pub type PasteResult<T> = Result<T, PasteError>;
+
+impl From<String> for PasteError {
+    fn from(err: String) -> Self {
+        PasteError::Message(err)
+    }
+}
 
 impl From<reqwest::Error> for PasteError {
     fn from(err: reqwest::Error) -> Self {
@@ -37,6 +44,7 @@ impl Display for PasteError {
                 PasteError::Reqwest(err) => format!("Request error: {}", err),
                 PasteError::Url(err) => format!("Url error: {}", err),
                 PasteError::IO(err) => format!("IO error: {}", err),
+                PasteError::Message(err) => format!("other error: {}", err),
             }
         )
     }
@@ -48,6 +56,7 @@ impl Error for PasteError {
             PasteError::Reqwest(err) => Some(err),
             PasteError::Url(err) => Some(err),
             PasteError::IO(err) => Some(err),
+            PasteError::Message(_) => None,
         }
     }
 }

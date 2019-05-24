@@ -267,7 +267,12 @@ fn run() -> Result<(), Box<dyn Error>> {
         Op::Paste {
             server,
             server_args,
-        } => do_paste(config),
+        } => {
+            // TODO: merge config and paste args and send to do_paste.
+            // need more complex stuff to allow each backend to provide its own clap app which we
+            // can pass the server_args to.
+            do_paste(config)
+        },
         Op::DumpConfig => {
             println!("{}", toml::to_string(&config)?);
             Ok(())

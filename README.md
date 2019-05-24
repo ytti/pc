@@ -20,7 +20,7 @@ philosophy.
   information
 - [X] comprehensive graceful error handling
 - [X] hardcoded sensible defaults for use without config file
-- [ ] paste url history
+- [X] paste url history
 - [ ] optional arguments for servers that support:
   - [ ] expire time
   - [ ] public/private
@@ -91,6 +91,13 @@ Example config file:
 [main]
 # optional; if missing, will use random server entry
 default = "rs"
+
+# optional; if missing, will not log url history.
+# if set, will append url of successful pastes to this file, one per line,
+# newest to the bottom. The file is created if not existing. Parent directories
+# will not be created. If paste successful but failed to write histfile, a
+# warning will be printed to stderr and will exit with a non-zero exit code.
+histfile = "/tmp/paste_history.txt"
 
 [servers]
 

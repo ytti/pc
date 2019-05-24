@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
-use std::fs::File;
-use std::io::{self, Read};
-use std::path::Path;
+use std::fs::{File, OpenOptions};
+use std::io::{self, Read, Write};
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
@@ -53,6 +53,7 @@ struct Config {
 #[serde(deny_unknown_fields)]
 struct MainConfig {
     default: Option<String>,
+    histfile: Option<PathBuf>,
 }
 
 impl std::default::Default for Config {
@@ -60,6 +61,7 @@ impl std::default::Default for Config {
         Config {
             main: MainConfig {
                 default: Some("paste_rs".to_owned()),
+                histfile: None,
             },
             servers: {
                 let mut servers = HashMap::new();
@@ -171,6 +173,23 @@ To use this, add a server block under the heading [servers.{0}] in the config to
 
     // send the url to stdout!
     println!("{}", paste_url);
+
+    if let Some(ref path) = config.main.histfile {
+        match write_hist(paste_url, path) {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("error writing to histfile: {}", path.display());
+                return Err(e);
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn write_hist(paste_url: Url, path: &Path) -> Result<(), Box<dyn Error>> {
+    let mut file = OpenOptions::new().append(true).create(true).open(path)?;
+    file.write(format!("{}\n", paste_url).as_bytes())?;
     Ok(())
 }
 

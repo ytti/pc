@@ -3,7 +3,7 @@ use std::env;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
@@ -24,7 +24,7 @@ struct Opt {
 
     /// Set a histfile to log urls to
     #[structopt(long = "histfile", short = "H")]
-    histfile: Option<PathBuf>,
+    histfile: Option<String>,
 
     #[structopt(subcommand)]
     cmd: Option<OptCommand>,
@@ -57,7 +57,7 @@ struct Config {
 #[serde(deny_unknown_fields)]
 struct MainConfig {
     server: Option<String>,
-    histfile: Option<PathBuf>,
+    histfile: Option<String>,
 }
 
 impl Config {
@@ -70,10 +70,13 @@ impl Config {
             ..self
         }
     }
-    fn with_histfile_override(self, new_histfile: Option<PathBuf>) -> Self {
+    fn with_histfile_override(self, new_histfile: Option<String>) -> Self {
         Config {
             main: MainConfig {
-                histfile: new_histfile.or(self.main.histfile),
+                histfile: match new_histfile {
+                    Some(ref c) if c.as_str() == "NONE" => None,
+                    _ => new_histfile.or(self.main.histfile),
+                },
                 ..self.main
             },
             ..self
@@ -201,7 +204,7 @@ To use this, add a server block under the heading [servers.{0}] in the config to
         match write_hist(paste_url, path) {
             Ok(_) => {}
             Err(e) => {
-                eprintln!("error writing to histfile: {}", path.display());
+                eprintln!("error writing to histfile: {}", path);
                 return Err(e);
             }
         }
@@ -210,7 +213,7 @@ To use this, add a server block under the heading [servers.{0}] in the config to
     Ok(())
 }
 
-fn write_hist(paste_url: Url, path: &Path) -> Result<(), Box<dyn Error>> {
+fn write_hist(paste_url: Url, path: &str) -> Result<(), Box<dyn Error>> {
     let mut file = OpenOptions::new().append(true).create(true).open(path)?;
     file.write(format!("{}\n", paste_url).as_bytes())?;
     Ok(())

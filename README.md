@@ -69,6 +69,9 @@ $ pc dump-config
 
 $ pc -c NONE dump-config
 <default config as toml>
+
+$ echo "hi" | pc --histfile NONE
+http://vpaste.net/example
 ```
 
 ## Configuration

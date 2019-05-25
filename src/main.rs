@@ -12,6 +12,25 @@ use crate::backends::{build_client, info_from_str, BackendConfig, BACKEND_NAMES}
 use crate::config::{choose_config_file, read_config, Config};
 use crate::utils::{read_stdin, write_hist};
 
+#[derive(Debug, Clone)]
+struct Opt {
+    config_file: Option<String>,
+    op: Op,
+    histfile: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+enum Op {
+    Paste {
+        server: Option<String>,
+        server_args: Vec<String>,
+    },
+    List,
+    ShowBackend(String),
+    ListBackends,
+    DumpConfig,
+}
+
 fn do_paste(config: Config, mut server_args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.is_empty() {
@@ -202,25 +221,6 @@ fn run() -> Result<(), Box<dyn Error>> {
             Err(s) => Err(s.into()),
         },
     }
-}
-
-#[derive(Debug, Clone)]
-struct Opt {
-    config_file: Option<String>,
-    op: Op,
-    histfile: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-enum Op {
-    Paste {
-        server: Option<String>,
-        server_args: Vec<String>,
-    },
-    List,
-    ShowBackend(String),
-    ListBackends,
-    DumpConfig,
 }
 
 fn main() {

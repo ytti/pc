@@ -1,8 +1,9 @@
-use serde::Deserialize;
-use serde::{Deserializer, Serializer};
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
+
+use serde::Deserialize;
+use serde::{Deserializer, Serializer};
 use url::Url;
 
 pub fn deserialize_url<'de, D>(d: D) -> Result<Url, D::Error>

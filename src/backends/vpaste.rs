@@ -1,14 +1,8 @@
-//! Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.
-//!
-//! Example config block:
-//!
-//!     [servers.vp]
-//!     backend = "vpaste"
-//!     url = "http://vpaste.net/"
 use reqwest::multipart::Form;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use url::Url;
+use structopt::StructOpt;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
@@ -23,6 +17,15 @@ pub struct Backend {
     pub url: Url,
 }
 
+#[derive(Debug, StructOpt)]
+#[structopt(about = "modern_paste backend")]
+#[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
+pub struct Opt {
+    /// Url
+    #[structopt(short = "u", long = "url")]
+    url: Option<Url>,
+}
+
 pub const NAME: &'static str = "vpaste";
 
 pub fn info() -> &'static str {
@@ -33,6 +36,15 @@ Example config block:
     [servers.vp]
     backend = "vpaste"
     url = "http://vpaste.net/""#
+}
+
+impl Backend {
+    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
+        let opt = Opt::from_iter_safe(args)?;
+        Ok(Box::new(Self {
+            url: opt.url.unwrap_or(self.url),
+        }))
+    }
 }
 
 impl PasteClient for Backend {

@@ -1,11 +1,7 @@
-//! Generic paste service backend. Supports any pastebin services with the following two
-//! properties:
-//!
-//! 1. data is uploaded via plain text in the POST request body to the base url.
-//! 2. the generated paste url is returned in plain text as the response body.
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use url::Url;
+use structopt::StructOpt;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
@@ -18,6 +14,15 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
+}
+
+#[derive(Debug, StructOpt)]
+#[structopt(about = "generic backend")]
+#[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
+pub struct Opt {
+    /// Url
+    #[structopt(short = "u", long = "url")]
+    url: Option<Url>,
 }
 
 pub const NAME: &'static str = "generic";
@@ -34,6 +39,15 @@ Example config block:
     [servers.paste_rs]
     backend = "generic"
     url = "https://paste.rs/""#
+}
+
+impl Backend {
+    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
+        let opt = Opt::from_iter_safe(args)?;
+        Ok(Box::new(Self {
+            url: opt.url.unwrap_or(self.url),
+        }))
+    }
 }
 
 impl PasteClient for Backend {

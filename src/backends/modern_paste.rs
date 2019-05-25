@@ -14,15 +14,20 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
+    pub title: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "modern_paste", about = "modern_paste backend")]
-#[structopt(raw(setting = "clap::AppSettings::NoBinaryName"))]
+#[structopt(about = "modern_paste backend")]
+#[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
     /// Title for the paste
     #[structopt(short = "t", long = "title")]
     title: Option<String>,
+
+    /// Url
+    #[structopt(short = "u", long = "url")]
+    url: Option<Url>,
 }
 
 pub const NAME: &'static str = "modern_paste";
@@ -39,6 +44,16 @@ Example config block:
     url = "https://paste.fedoraproject.org/""#
 }
 
+impl Backend {
+    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
+        let opt = Opt::from_iter_safe(args)?;
+        Ok(Box::new(Self {
+            url: opt.url.unwrap_or(self.url),
+            title: opt.title.or(self.title),
+        }))
+    }
+}
+
 impl PasteClient for Backend {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
@@ -48,7 +63,7 @@ impl PasteClient for Backend {
             expiry_time: None,
             language: None,
             password: None,
-            title: None,
+            title: self.title.clone(),
         };
 
         let mut api_endpoint: Url = self.url.clone();

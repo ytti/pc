@@ -7,7 +7,6 @@ use std::path::Path;
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use serde::{Deserialize, Serialize};
-use structopt::StructOpt;
 use url::Url;
 
 use pc::{backends, build_client, BackendConfig};
@@ -130,7 +129,7 @@ fn read_stdin() -> io::Result<String> {
     Ok(buffer)
 }
 
-fn do_paste(config: Config, server_args: Vec<String>) -> Result<(), Box<dyn Error>> {
+fn do_paste(config: Config, mut server_args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // sanity checking
     if config.servers.is_empty() {
         return Err(r#"No servers defined in configuration!
@@ -161,30 +160,23 @@ To use this, add a server block under the heading [servers.{0}] in the config to
         }
     };
 
-    // TODO: here is where we merge in the server_args with the backend_config
-    // - this should be implemented as a clap app in each backend (on the pasteclient trait)?
-    // - server_args should override those set in the config (backend_config)
+    server_args.insert(0, server_choice);
 
-    // NOTE: poc for getting a server-block specific arg parsing.
-    // currently hardcoded to modern_paste...
-    let opt = match backends::modern_paste::Opt::from_iter_safe(server_args) {
-        Ok(opt) => opt,
+    let backend = match build_client(backend_config.clone(), server_args) {
+        Ok(backend) => backend,
         Err(e) => {
             match e.kind {
                 clap::ErrorKind::HelpDisplayed => {
-                    eprintln!("Config for this server block:\n\n{}", toml::to_string(&backend_config)?);
+                    eprintln!("Config for this server block:\n\n{:#?}\n", &backend_config);
                 }
                 _ => {}
             }
             e.exit();
         }
     };
-    dbg!(&opt);
 
     let data = read_stdin()?;
-
-    let client = build_client(backend_config);
-    let paste_url = client.paste(data)?;
+    let paste_url = backend.paste(data)?;
 
     // send the url to stdout!
     println!("{}", paste_url);
@@ -283,7 +275,6 @@ fn run() -> Result<(), Box<dyn Error>> {
         config_file: matches.value_of("config").map(|s| s.to_owned()),
         op,
     };
-    dbg!(&opt);
 
     let fname: Option<String> = choose_config_file(&opt.config_file)?;
     let config = match fname {

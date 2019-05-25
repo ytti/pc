@@ -8,12 +8,12 @@ pub use crate::backends::{fiche, generic, haste, modern_paste, vpaste};
 pub use crate::types::PasteClient;
 
 /// Provides a paste client implementation given config
-pub fn build_client(config: BackendConfig) -> Box<dyn PasteClient> {
+pub fn build_client(config: BackendConfig, override_args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
     match config {
-        BackendConfig::Generic(backend) => Box::new(backend),
-        BackendConfig::Haste(backend) => Box::new(backend),
-        BackendConfig::Vpaste(backend) => Box::new(backend),
-        BackendConfig::Fiche(backend) => Box::new(backend),
-        BackendConfig::ModernPaste(backend) => Box::new(backend),
+        BackendConfig::Generic(backend) => backend.apply_args(override_args),
+        BackendConfig::Haste(backend) => backend.apply_args(override_args),
+        BackendConfig::Vpaste(backend) => backend.apply_args(override_args),
+        BackendConfig::Fiche(backend) => backend.apply_args(override_args),
+        BackendConfig::ModernPaste(backend) => backend.apply_args(override_args),
     }
 }

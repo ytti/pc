@@ -48,7 +48,7 @@ impl Display for BackendConfig {
             BackendConfig::Fiche(fiche::Backend { domain, port }) => {
                 write!(f, "fiche | {}:{}", domain, port)
             }
-            BackendConfig::ModernPaste(modern_paste::Backend { url }) => {
+            BackendConfig::ModernPaste(modern_paste::Backend { url, .. }) => {
                 write!(f, "modern_paste | {}", url)
             }
         }

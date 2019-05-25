@@ -1,16 +1,7 @@
-//! Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
-//! termbin.com)
-//!
-//! Example config block:
-//!
-//!     [servers.termbin]
-//!     backend = "fiche"
-//!     url = "termbin.com"
-//!     # default port if missing is 9999
-//!     port = 9999
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
+use structopt::StructOpt;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -25,6 +16,19 @@ pub struct Backend {
     pub domain: String,
     #[serde(default = "default_port")]
     pub port: u16,
+}
+
+#[derive(Debug, StructOpt)]
+#[structopt(about = "fiche backend")]
+#[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
+pub struct Opt {
+    /// domain
+    #[structopt(short = "d", long = "domain")]
+    domain: Option<String>,
+
+    /// port
+    #[structopt(short = "p", long = "port")]
+    port: Option<u16>,
 }
 
 pub const NAME: &'static str = "fiche";
@@ -44,6 +48,16 @@ Example config block:
     url = "termbin.com"
     # default port if missing is 9999
     port = 9999"#
+}
+
+impl Backend {
+    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
+        let opt = Opt::from_iter_safe(args)?;
+        Ok(Box::new(Self {
+            domain: opt.domain.unwrap_or(self.domain),
+            port: opt.port.unwrap_or(self.port),
+        }))
+    }
 }
 
 impl PasteClient for Backend {

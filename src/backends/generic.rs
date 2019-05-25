@@ -57,12 +57,4 @@ impl PasteClient for Backend {
         let url = Url::parse(&text)?;
         Ok(url)
     }
-
-    fn info(&self) -> &'static str {
-        info()
-    }
-
-    fn name(&self) -> &'static str {
-        NAME
-    }
 }

@@ -80,14 +80,6 @@ impl PasteClient for Backend {
 
         Ok(data.url)
     }
-
-    fn info(&self) -> &'static str {
-        info()
-    }
-
-    fn name(&self) -> &'static str {
-        NAME
-    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]

@@ -60,14 +60,6 @@ impl PasteClient for Backend {
         base_url.set_path(&info.key);
         Ok(base_url)
     }
-
-    fn info(&self) -> &'static str {
-        info()
-    }
-
-    fn name(&self) -> &'static str {
-        NAME
-    }
 }
 
 #[derive(Deserialize)]

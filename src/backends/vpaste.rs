@@ -56,12 +56,4 @@ impl PasteClient for Backend {
             .send()?;
         Ok(res.url().to_owned())
     }
-
-    fn info(&self) -> &'static str {
-        info()
-    }
-
-    fn name(&self) -> &'static str {
-        NAME
-    }
 }

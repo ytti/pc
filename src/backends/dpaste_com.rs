@@ -8,6 +8,7 @@ use crate::error::PasteResult;
 use crate::types::PasteClient;
 use crate::utils::{deserialize_url, serialize_url};
 
+// TODO: add support for syntax, expiry_days, poster
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]

@@ -1,11 +1,6 @@
-use std::env;
 use std::error::Error;
-use std::fs::{File, OpenOptions};
-use std::io::{self, Read, Write};
-use std::path::Path;
 
 use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
-use url::Url;
 
 mod backends;
 mod config;
@@ -13,57 +8,9 @@ mod error;
 mod types;
 mod utils;
 
-use crate::config::Config;
-use crate::utils::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
-
-fn read_file(fname: &str) -> io::Result<String> {
-    let mut file = File::open(fname)?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    Ok(contents)
-}
-
-fn choose_config_file(file_override: &Option<String>) -> Result<Option<String>, Box<dyn Error>> {
-    match file_override {
-        Some(s) => {
-            // file override, use if exists, else err
-            if s == "NONE" {
-                Ok(None)
-            } else {
-                if Path::new(s).exists() {
-                    Ok(Some(s.to_owned()))
-                } else {
-                    Err(format!("config file not found: {:?}", s).into())
-                }
-            }
-        }
-        None => {
-            // no file override; find a file in the default locations
-            let config_dir = match env::var("XDG_CONFIG_HOME") {
-                Ok(val) => val,
-                Err(_) => format!("{}/.config", env::var("HOME")?),
-            };
-
-            let config_file = format!("{}/pc/config.toml", config_dir);
-
-            if Path::new(&config_file).exists() {
-                Ok(Some(config_file))
-            } else {
-                Ok(None)
-            }
-        }
-    }
-}
-
-fn read_stdin() -> io::Result<String> {
-    let mut buffer = String::new();
-    let stdin = io::stdin();
-    let mut handle = stdin.lock();
-
-    handle.read_to_string(&mut buffer)?;
-
-    Ok(buffer)
-}
+use crate::backends::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
+use crate::config::{choose_config_file, read_config, Config};
+use crate::utils::{read_stdin, write_hist};
 
 fn do_paste(config: Config, mut server_args: Vec<String>) -> Result<(), Box<dyn Error>> {
     // sanity checking
@@ -128,18 +75,6 @@ To use this, add a server block under the heading [servers.{0}] in the config to
     }
 
     Ok(())
-}
-
-fn write_hist(paste_url: Url, path: &str) -> Result<(), Box<dyn Error>> {
-    let mut file = OpenOptions::new().append(true).create(true).open(path)?;
-    file.write(format!("{}\n", paste_url).as_bytes())?;
-    Ok(())
-}
-
-fn read_config(path: &str) -> Result<Config, Box<dyn Error>> {
-    let data = read_file(path)?;
-    let config = toml::from_str(&data)?;
-    Ok(config)
 }
 
 fn run() -> Result<(), Box<dyn Error>> {

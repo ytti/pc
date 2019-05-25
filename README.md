@@ -1,61 +1,100 @@
 # pc
 
 pc (paste-client) is a command line tool for uploading text to a pastebin
-server. It supports many different pastebin style servers, and is configurable.
-It aims to be simple, work with stdin/stdout, and adhere to the unix
-philosophy.
+server. It supports many different pastebin style servers, and is highly
+configurable.  It aims to be simple, work with stdin/stdout, and adhere to the
+unix philosophy.
 
 
 ## Features
 
-- [ ] supported servers
-  - [X] generic (paste.rs)
-  - [X] hastebin
-  - [X] vpaste
-  - [X] fiche (termbin)
-  - [X] fedora pastebin
-  - [ ] pastebin.com
-- [X] configuration file for providing defaults and server configurations
-- [X] quickly list configured servers, backends, full config, detailed backend
-  information
-- [X] comprehensive graceful error handling
-- [X] hardcoded sensible defaults for use without config file
-- [X] paste url history
-- [ ] optional arguments for servers that support:
-  - [ ] expire time
-  - [ ] public/private
-  - [ ] filetype
-  - [ ] password protected
-  - [ ] title
+- Many supported servers. If your favourite pastebin isn't supported, please
+  open an issue.
+- Configuration file for providing defaults and server configurations.
+- Comprehensive command line help. Quickly list configured servers, backends,
+  full config, detailed backend information.
+- Comprehensive graceful error handling.
+- Baked in, sane defaults for use without config file.
+- Optional paste url history.
+- Optional arguments for servers that support extra features, such as title,
+  filetype, private pastes, expire time, etc.
 
-TODO: work out nice api for showing which server backends support which
-arguments
 
 ## Usage examples
+
+Simplest, out of the box usage:
 
 ```
 $ echo "Hello" | pc
 https://paste.rs/saC
+```
 
-$ pc --help
-<usage instructions>
+Select a custom server:
 
+```
 $ pc vpaste < code.txt
 http://vpaste.net/example
+```
 
+Each configured server accepts cli args to override defaults, depending on
+which backend is used. Here, the `fedora` server block uses the `modern_paste`
+backend, which allows setting a custom title for the paste.
+Note: can only use server-specific args if specifying the server on the cli.
+
+```
 $ pc fedora --title "foo debug log" < debug.log
 https://paste.fedoraproject.org/paste/7Taaazf88VimfqOnriOsFg
+```
 
+To see a server block's configuration, backend, and allowed args:
+
+```
+$ pc fedora --help
+Config for this server block:
+
+ModernPaste(
+    Backend {
+        url: "https://paste.fedoraproject.org/",
+        title: None
+    }
+)
+
+modern_paste backend
+
+USAGE:
+    fedora [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -t, --title <title>    Title for the paste
+    -u, --url <url>        Url
+```
+
+Show a concise list of configured servers available to use:
+
+```
 $ pc list
 rs => generic | https://paste.rs/ [default]
 vpaste => generic | http://vpaste.net/
 haste => haste | https://hastebin.com/
+```
 
+List all supported backends:
+
+```
 $ pc list-backends
 generic
 haste
 vpaste
+...
+```
 
+Show info and configuration help for a particular backend:
+
+```
 $ pc show-backend generic
 The generic backend works for any pastebin service that accepts the data in the
 body of a POST request and returns the access url in plain text in the response
@@ -66,16 +105,29 @@ Example:
   [servers.rs]
   backend = "generic"
   url = "https://paste.rs/"
+```
 
+Dump the current config as interpreted. Helpful for debugging.
+
+```
 $ pc dump-config
 <toml config as currently used>
+```
 
-$ pc -c NONE dump-config
+Copy the default config to the user config file. Useful for first setup.
+
+```
+$ pc -c NONE dump-config > ~/.config/pc/config.toml
 <default config as toml>
+```
 
+Histfile feature can also be disabled/enabled on the cli:
+
+```
 $ echo "hi" | pc --histfile NONE
 http://vpaste.net/example
 ```
+
 
 ## Configuration
 
@@ -87,12 +139,13 @@ following:
   b) if file isn't found, exit with error
 2. otherwise use `$XDG_CONFIG_HOME/pc/config.toml` if exists
 3. otherwise use `$HOME/.config/pc/config.toml` if exists
-5. finally, no files found; use hardcoded defaults (see what hardcoded defaults
-   are with `pc -c NONE dump-config`
-
+5. finally, no files found; use defaults (see what defaults
+   are with `pc -c NONE dump-config` or see the default config file in this
+   repo.
 
 See [default_config.toml](./default_config.toml) for an example config file.
 (This is also baked into the app as the default config.)
+
 
 ## Supported servers
 
@@ -105,6 +158,7 @@ See [default_config.toml](./default_config.toml) for an example config file.
 | [modern_paste](https://github.com/LINKIWI/modern-paste) | modern_paste | https://paste.fedoraproject.org/ |
 
 See the [wiki page](https://github.com/swalladge/pc/wiki/server-list) for a list of public server instances supported.
+
 
 ## Development
 

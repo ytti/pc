@@ -196,7 +196,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 .short("c")
                 .long("config")
                 .value_name("FILE")
-                .help("Set a custom config file")
+                .help("Set a custom config file. \"NONE\" forces use of default")
                 .takes_value(true),
         )
         .arg(
@@ -204,7 +204,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 .short("H")
                 .long("histfile")
                 .value_name("FILE")
-                .help("Set a custom file to log to")
+                .help("Set a custom file to log to. \"NONE\" disables")
                 .takes_value(true),
         )
         .subcommand(SubCommand::with_name("list").about("List info about available server blocks"))

@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use std::env;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
@@ -6,59 +5,16 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 
 use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
-use serde::{Deserialize, Serialize};
 use url::Url;
 
-use pc::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
+mod backends;
+mod config;
+mod error;
+mod types;
+mod utils;
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-struct Config {
-    main: MainConfig,
-    servers: HashMap<String, BackendConfig>,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-struct MainConfig {
-    server: Option<String>,
-    histfile: Option<String>,
-}
-
-impl Config {
-    fn with_server_override(self, new_server: Option<String>) -> Self {
-        Config {
-            main: MainConfig {
-                server: match new_server {
-                    Some(ref c) if c.as_str() == "NONE" => None,
-                    _ => new_server.or(self.main.server),
-                },
-                ..self.main
-            },
-            ..self
-        }
-    }
-
-    fn with_histfile_override(self, new_histfile: Option<String>) -> Self {
-        Config {
-            main: MainConfig {
-                histfile: match new_histfile {
-                    Some(ref c) if c.as_str() == "NONE" => None,
-                    _ => new_histfile.or(self.main.histfile),
-                },
-                ..self.main
-            },
-            ..self
-        }
-    }
-}
-
-impl std::default::Default for Config {
-    fn default() -> Self {
-        toml::from_str(include_str!("../default_config.toml"))
-            .expect("default config should be correct")
-    }
-}
+use crate::config::Config;
+use crate::utils::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
 
 fn read_file(fname: &str) -> io::Result<String> {
     let mut file = File::open(fname)?;

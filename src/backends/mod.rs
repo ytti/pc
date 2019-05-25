@@ -32,23 +32,23 @@ pub fn info_from_str(name: &str) -> Result<&'static str, String> {
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub enum BackendConfig {
-    Generic(generic::Config),
-    Haste(haste::Config),
-    Vpaste(vpaste::Config),
-    Fiche(fiche::Config),
-    ModernPaste(modern_paste::Config),
+    Generic(generic::Backend),
+    Haste(haste::Backend),
+    Vpaste(vpaste::Backend),
+    Fiche(fiche::Backend),
+    ModernPaste(modern_paste::Backend),
 }
 
 impl Display for BackendConfig {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
-            BackendConfig::Generic(generic::Config { url }) => write!(f, "generic | {}", url),
-            BackendConfig::Haste(haste::Config { url }) => write!(f, "haste | {}", url),
-            BackendConfig::Vpaste(vpaste::Config { url }) => write!(f, "vpaste | {}", url),
-            BackendConfig::Fiche(fiche::Config { domain, port }) => {
+            BackendConfig::Generic(generic::Backend { url }) => write!(f, "generic | {}", url),
+            BackendConfig::Haste(haste::Backend { url }) => write!(f, "haste | {}", url),
+            BackendConfig::Vpaste(vpaste::Backend { url }) => write!(f, "vpaste | {}", url),
+            BackendConfig::Fiche(fiche::Backend { domain, port }) => {
                 write!(f, "fiche | {}:{}", domain, port)
             }
-            BackendConfig::ModernPaste(modern_paste::Config { url }) => {
+            BackendConfig::ModernPaste(modern_paste::Backend { url }) => {
                 write!(f, "modern_paste | {}", url)
             }
         }

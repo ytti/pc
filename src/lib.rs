@@ -10,10 +10,10 @@ pub use crate::types::PasteClient;
 /// Provides a paste client implementation given config
 pub fn build_client(config: BackendConfig) -> Box<dyn PasteClient> {
     match config {
-        BackendConfig::Generic(config) => Box::new(generic::new(config)),
-        BackendConfig::Haste(config) => Box::new(haste::new(config)),
-        BackendConfig::Vpaste(config) => Box::new(vpaste::new(config)),
-        BackendConfig::Fiche(config) => Box::new(fiche::new(config)),
-        BackendConfig::ModernPaste(config) => Box::new(modern_paste::new(config)),
+        BackendConfig::Generic(backend) => Box::new(backend),
+        BackendConfig::Haste(backend) => Box::new(backend),
+        BackendConfig::Vpaste(backend) => Box::new(backend),
+        BackendConfig::Fiche(backend) => Box::new(backend),
+        BackendConfig::ModernPaste(backend) => Box::new(backend),
     }
 }

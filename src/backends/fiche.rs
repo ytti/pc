@@ -21,26 +21,13 @@ use crate::types::PasteClient;
 #[serde(tag = "backend")]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
-pub struct Config {
+pub struct Backend {
     pub domain: String,
     #[serde(default = "default_port")]
     pub port: u16,
 }
 
-#[derive(Debug, Clone)]
-pub struct Backend {
-    domain: String,
-    port: u16,
-}
-
 pub const NAME: &'static str = "fiche";
-
-pub fn new(config: Config) -> Backend {
-    Backend {
-        domain: config.domain,
-        port: config.port,
-    }
-}
 
 pub fn default_port() -> u16 {
     9999

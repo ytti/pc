@@ -65,13 +65,13 @@ impl std::default::Default for Config {
                 let mut servers = HashMap::new();
                 servers.insert(
                     "paste_rs".to_owned(),
-                    BackendConfig::Generic(backends::generic::Config {
+                    BackendConfig::Generic(backends::generic::Backend {
                         url: Url::parse("https://paste.rs/").unwrap(),
                     }),
                 );
                 servers.insert(
                     "vpaste".to_owned(),
-                    BackendConfig::Vpaste(backends::vpaste::Config {
+                    BackendConfig::Vpaste(backends::vpaste::Backend {
                         url: Url::parse("http://vpaste.net/").unwrap(),
                     }),
                 );

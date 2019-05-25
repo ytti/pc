@@ -17,22 +17,13 @@ use crate::utils::{deserialize_url, serialize_url};
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
-pub struct Config {
+pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
 }
 
-#[derive(Debug, Clone)]
-pub struct Backend {
-    url: Url,
-}
-
 pub const NAME: &'static str = "vpaste";
-
-pub fn new(config: Config) -> Backend {
-    Backend { url: config.url }
-}
 
 pub fn info() -> &'static str {
     r#"Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.

@@ -10,7 +10,7 @@ use crate::utils::{deserialize_url, serialize_url};
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
-pub struct Config {
+pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
@@ -25,16 +25,7 @@ pub struct Opt {
     title: Option<String>,
 }
 
-#[derive(Debug, Clone)]
-pub struct Backend {
-    url: Url,
-}
-
 pub const NAME: &'static str = "modern_paste";
-
-pub fn new(config: Config) -> Backend {
-    Backend { url: config.url }
-}
 
 pub fn info() -> &'static str {
     r#"Modern Paste backend.

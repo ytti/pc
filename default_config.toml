@@ -33,3 +33,7 @@ port = 9999
 [servers.fedora]
 backend = "modern_paste"
 url = "https://paste.fedoraproject.org/"
+
+[servers.dpastecom]
+backend = "dpaste_com"
+url = "http://dpaste.com/"

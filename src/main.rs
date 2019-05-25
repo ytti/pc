@@ -9,7 +9,7 @@ use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use pc::{backends, build_client, BackendConfig};
+use pc::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -298,12 +298,12 @@ fn run() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Op::ListBackends => {
-            for name in backends::BACKEND_NAMES {
+            for name in BACKEND_NAMES {
                 println!("{}", name);
             }
             Ok(())
         }
-        Op::ShowBackend(name) => match backends::info_from_str(&name) {
+        Op::ShowBackend(name) => match info_from_str(&name) {
             Ok(s) => {
                 println!("{}", s);
                 Ok(())

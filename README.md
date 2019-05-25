@@ -147,7 +147,7 @@ See [default_config.toml](./default_config.toml) for an example config file.
 (This is also baked into the app as the default config.)
 
 
-## Supported servers
+## Supported server backends
 
 | server spec                                             | backend      | example instance                 |
 | ------                                                  | -------      | ---------------                  |
@@ -156,6 +156,7 @@ See [default_config.toml](./default_config.toml) for an example config file.
 | [paste.rs](https://paste.rs/web)                        | generic      | https://paste.rs/                |
 | [fiche](https://github.com/solusipse/fiche)             | fiche        | https://termbin.com/             |
 | [modern_paste](https://github.com/LINKIWI/modern-paste) | modern_paste | https://paste.fedoraproject.org/ |
+| [dpaste.com](http://dpaste.com/api/v2/)                 | dpaste_com   | http://dpaste.com/               |
 
 See the [wiki page](https://github.com/swalladge/pc/wiki/server-list) for a list of public server instances supported.
 

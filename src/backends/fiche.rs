@@ -1,15 +1,14 @@
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
-use structopt::StructOpt;
 use serde::{Deserialize, Serialize};
+use structopt::StructOpt;
 use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-#[serde(tag = "backend")]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub struct Backend {

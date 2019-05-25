@@ -1,7 +1,7 @@
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use url::Url;
 use structopt::StructOpt;
+use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;

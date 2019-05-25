@@ -5,7 +5,7 @@ use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
 
-use clap::{App, AppSettings, Arg, SubCommand};
+use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -55,28 +55,8 @@ impl Config {
 
 impl std::default::Default for Config {
     fn default() -> Self {
-        Config {
-            main: MainConfig {
-                server: Some("paste_rs".to_owned()),
-                histfile: None,
-            },
-            servers: {
-                let mut servers = HashMap::new();
-                servers.insert(
-                    "paste_rs".to_owned(),
-                    BackendConfig::Generic(backends::generic::Backend {
-                        url: Url::parse("https://paste.rs/").unwrap(),
-                    }),
-                );
-                servers.insert(
-                    "vpaste".to_owned(),
-                    BackendConfig::Vpaste(backends::vpaste::Backend {
-                        url: Url::parse("http://vpaste.net/").unwrap(),
-                    }),
-                );
-                servers
-            },
-        }
+        toml::from_str(include_str!("../default_config.toml"))
+            .expect("default config should be correct")
     }
 }
 
@@ -208,8 +188,8 @@ fn read_config(path: &str) -> Result<Config, Box<dyn Error>> {
 
 fn run() -> Result<(), Box<dyn Error>> {
     let app = App::new("pc")
-        .version("0.1.0")
-        .author("author")
+        .version(crate_version!())
+        .author(crate_authors!())
         .setting(AppSettings::AllowExternalSubcommands)
         .arg(
             Arg::with_name("config")

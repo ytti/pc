@@ -169,6 +169,23 @@ There is a Makefile for some other common tasks. Eg. `make fmt` will run
 rustfmt on all source files.
 
 
+## Related projects
+
+- [pastebinit](https://launchpad.net/pastebinit): similar concept, supports
+  config file, several pastebin servers, and options like private paste, set
+  title, etc. An advantage is that this is available in several distros'
+  official repos.
+- curl: most lightweight pastebins support uploading text in a curl-friendly
+  way. Eg. `<command> | curl -F 'sprunge=<-' http://sprunge.us` for sprunge.
+  This is the simplest and most lightweight option, but requires remembering
+  the specific curl arguments or setting up a shell alias for easy use.
+- server/site-specific clients include: [ix](http://ix.io/client),
+  [gist](https://github.com/defunkt/gist),
+  [fb](https://git.server-speed.net/users/flo/fb/) (paste.xinu.at), ...
+
+See the [archwiki list of pastebin clients](https://wiki.archlinux.org/index.php/List_of_applications/Internet#Pastebin_clients) for other related projects.
+
+
 ## License
 
 Copyright © 2019 Samuel Walladge

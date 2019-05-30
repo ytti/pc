@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
@@ -19,7 +21,7 @@ pub struct Backend {
 #[derive(Debug, StructOpt)]
 #[structopt(about = "generic backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
-pub struct Opt {
+struct Opt {
     /// Url
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
@@ -27,8 +29,7 @@ pub struct Opt {
 
 pub const NAME: &'static str = "generic";
 
-pub fn info() -> &'static str {
-    r#"Generic paste service backend. Supports any pastebin services with the following two
+pub const INFO: &'static str = r#"Generic paste service backend. Supports any pastebin services with the following two
 properties:
 
 1. data is uploaded via plain text in the POST request body to the base url.
@@ -38,17 +39,8 @@ Example config block:
 
     [servers.paste_rs]
     backend = "generic"
-    url = "https://paste.rs/""#
-}
+    url = "https://paste.rs/""#;
 
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            url: opt.url.unwrap_or(self.url),
-        }))
-    }
-}
 
 impl PasteClient for Backend {
     fn paste(&self, data: String) -> PasteResult<Url> {
@@ -56,5 +48,19 @@ impl PasteClient for Backend {
         let text = client.post(self.url.clone()).body(data).send()?.text()?;
         let url = Url::parse(&text)?;
         Ok(url)
+    }
+
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(url) = opt.url {
+            self.url = url;
+        }
+        Ok(())
+    }
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "generic | {}", self.url)
     }
 }

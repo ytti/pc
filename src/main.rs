@@ -8,7 +8,7 @@ mod error;
 mod types;
 mod utils;
 
-use crate::backends::{build_client, info_from_str, BackendConfig, BACKEND_NAMES};
+use crate::backends::{BackendConfig, BACKENDS_INFO};
 use crate::config::{choose_config_file, read_config, Config};
 use crate::utils::{read_stdin, write_hist};
 
@@ -64,17 +64,19 @@ To use this, add a server block under the heading [servers.{0}] in the config to
 
     server_args.insert(0, server_choice);
 
-    let backend = match build_client(backend_config.clone(), server_args) {
-        Ok(backend) => backend,
+    let mut backend = backend_config.clone().extract_backend();
+
+    match backend.apply_args(server_args) {
         Err(e) => {
             match e.kind {
                 clap::ErrorKind::HelpDisplayed => {
-                    eprintln!("Config for this server block:\n\n{:#?}\n", &backend_config);
+                    eprintln!("Config for this server block:\n\n{:#?}\n", &backend);
                 }
                 _ => {}
             }
             e.exit();
         }
+        Ok(_) => {}
     };
 
     let data = read_stdin()?;
@@ -193,11 +195,11 @@ fn run() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Op::List => {
-            for (key, server) in config.servers.iter() {
+            for (key, backend_config) in config.servers.into_iter() {
                 println!(
                     "{0} => {1}{2}",
                     key,
-                    server,
+                    backend_config.extract_backend(),
                     if &config.main.server == &Some(key.to_owned()) {
                         " [default]"
                     } else {
@@ -208,17 +210,17 @@ fn run() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Op::ListBackends => {
-            for name in BACKEND_NAMES {
+            for name in BACKENDS_INFO.keys() {
                 println!("{}", name);
             }
             Ok(())
         }
-        Op::ShowBackend(name) => match info_from_str(&name) {
-            Ok(s) => {
+        Op::ShowBackend(name) => match BACKENDS_INFO.get(name.as_str()) {
+            Some(s) => {
                 println!("{}", s);
                 Ok(())
             }
-            Err(s) => Err(s.into()),
+            None => Err(format!("{} is not a valid backend", name).into()),
         },
     }
 }

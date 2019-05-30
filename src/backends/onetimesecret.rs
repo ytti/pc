@@ -1,7 +1,7 @@
 use std::fmt::{self, Display, Formatter};
 
-use reqwest::Client;
 use reqwest::multipart::Form;
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
 use url::Url;
@@ -55,7 +55,11 @@ impl PasteClient for Backend {
         let mut api_endpoint: Url = self.url.clone();
         api_endpoint.set_path("/api/v1/share");
 
-        let data: PasteResponse = Client::new().post(api_endpoint).multipart(form).send()?.json()?;
+        let data: PasteResponse = Client::new()
+            .post(api_endpoint)
+            .multipart(form)
+            .send()?
+            .json()?;
 
         let mut url: Url = self.url.clone();
         url.set_path(&format!("/secret/{}", data.secret_key));

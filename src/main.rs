@@ -38,7 +38,7 @@ fn do_paste(config: Config, mut server_args: Vec<String>) -> Result<(), Box<dyn 
 Define one in the config file like:
 
     [servers.rs]
-    backend = "generic"
+    backend = "paste_rs"
     url = "https://paste.rs/""#
             .into());
     }

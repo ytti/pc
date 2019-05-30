@@ -19,7 +19,7 @@ pub struct Backend {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(about = "generic backend")]
+#[structopt(about = "paste_rs backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 struct Opt {
     /// Url
@@ -27,19 +27,19 @@ struct Opt {
     url: Option<Url>,
 }
 
-pub const NAME: &'static str = "generic";
+pub const NAME: &'static str = "paste_rs";
 
 pub const INFO: &'static str =
-    r#"Generic paste service backend. Supports any pastebin services with the following two
-properties:
+    r#"paste.rs paste service backend. Supports https://paste.rs/ and any other pastebin services
+with the following two properties:
 
 1. data is uploaded via plain text in the POST request body to the base url.
 2. the generated paste url is returned in plain text as the response body.
 
 Example config block:
 
-    [servers.paste_rs]
-    backend = "generic"
+    [servers.rs]
+    backend = "paste_rs"
     url = "https://paste.rs/""#;
 
 impl PasteClient for Backend {

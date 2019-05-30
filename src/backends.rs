@@ -7,10 +7,10 @@ use crate::types::PasteClient;
 
 pub mod dpaste_com;
 pub mod fiche;
-pub mod generic;
 pub mod haste;
 pub mod modern_paste;
 pub mod onetimesecret;
+pub mod paste_rs;
 pub mod vpaste;
 
 lazy_static! {
@@ -18,7 +18,7 @@ lazy_static! {
         let mut m = HashMap::new();
         m.insert(dpaste_com::NAME, dpaste_com::INFO);
         m.insert(fiche::NAME, fiche::INFO);
-        m.insert(generic::NAME, generic::INFO);
+        m.insert(paste_rs::NAME, paste_rs::INFO);
         m.insert(haste::NAME, haste::INFO);
         m.insert(modern_paste::NAME, modern_paste::INFO);
         m.insert(onetimesecret::NAME, onetimesecret::INFO);
@@ -34,7 +34,7 @@ lazy_static! {
 pub enum BackendConfig {
     DpasteCom(dpaste_com::Backend),
     Fiche(fiche::Backend),
-    Generic(generic::Backend),
+    PasteRs(paste_rs::Backend),
     Haste(haste::Backend),
     ModernPaste(modern_paste::Backend),
     Onetimesecret(onetimesecret::Backend),
@@ -46,7 +46,7 @@ impl BackendConfig {
         match self {
             BackendConfig::DpasteCom(backend) => Box::new(backend),
             BackendConfig::Fiche(backend) => Box::new(backend),
-            BackendConfig::Generic(backend) => Box::new(backend),
+            BackendConfig::PasteRs(backend) => Box::new(backend),
             BackendConfig::Haste(backend) => Box::new(backend),
             BackendConfig::ModernPaste(backend) => Box::new(backend),
             BackendConfig::Onetimesecret(backend) => Box::new(backend),

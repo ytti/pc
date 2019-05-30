@@ -77,8 +77,8 @@ Show a concise list of configured servers available to use:
 
 ```
 $ pc list
-rs => generic | https://paste.rs/ [default]
-vpaste => generic | http://vpaste.net/
+rs => paste_rs | https://paste.rs/ [default]
+vpaste => vpaste | http://vpaste.net/
 haste => haste | https://hastebin.com/
 ```
 
@@ -86,7 +86,7 @@ List all supported backends:
 
 ```
 $ pc list-backends
-generic
+paste_rs
 haste
 vpaste
 ...
@@ -95,16 +95,17 @@ vpaste
 Show info and configuration help for a particular backend:
 
 ```
-$ pc show-backend generic
-The generic backend works for any pastebin service that accepts the data in the
-body of a POST request and returns the access url in plain text in the response
-body.
+$ pc show-backend fiche
+Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
+termbin.com)
 
-Example:
+Example config block:
 
-  [servers.rs]
-  backend = "generic"
-  url = "https://paste.rs/"
+    [servers.termbin]
+    backend = "fiche"
+    url = "termbin.com"
+    # default port if missing is 9999
+    port = 9999
 ```
 
 Dump the current config as interpreted. Helpful for debugging.
@@ -156,7 +157,7 @@ See [default_config.toml](./default_config.toml) for an example config file.
 | [fiche](https://github.com/solusipse/fiche)                       | `fiche`         | https://termbin.com/             |
 | [Modern Paste](https://github.com/LINKIWI/modern-paste)           | `modern_paste`  | https://paste.fedoraproject.org/ |
 | [ONE-TIME SECRET](https://github.com/onetimesecret/onetimesecret) | `onetimesecret` | https://onetimesecret.com/       |
-| [paste.rs](https://paste.rs/web)                                  | `generic`       | https://paste.rs/                |
+| [paste.rs](https://paste.rs/web)                                  | `paste_rs`       | https://paste.rs/                |
 | [vpaste](http://pileus.org/tools/vpaste)                          | `vpaste`        | http://vpaste.net/               |
 
 See the [wiki page](https://github.com/swalladge/pc/wiki/server-list) for a list of public server instances supported.

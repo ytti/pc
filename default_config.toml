@@ -37,3 +37,7 @@ url = "https://paste.fedoraproject.org/"
 [servers.dpastecom]
 backend = "dpaste_com"
 url = "http://dpaste.com/"
+
+[servers.ots]
+backend = "onetimesecret"
+url = "https://onetimesecret.com/"

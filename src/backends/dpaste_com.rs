@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use reqwest::multipart::Form;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -29,26 +31,23 @@ pub struct Opt {
 
 pub const NAME: &'static str = "dpaste_com";
 
-pub fn info() -> &'static str {
-    r#"Dpaste.com backend. Supports <http://dpaste.com/>.
+pub const INFO: &'static str = r#"Dpaste.com backend. Supports <http://dpaste.com/>.
 
 Example config block:
 
     [servers.dpastecom]
     backend = "dpaste_com"
-    url = "http://dpaste.com/""#
-}
-
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            url: opt.url.unwrap_or(self.url),
-        }))
-    }
-}
+    url = "http://dpaste.com/""#;
 
 impl PasteClient for Backend {
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(url) = opt.url {
+            self.url = url;
+        }
+        Ok(())
+    }
+
     fn paste(&self, data: String) -> PasteResult<Url> {
         // http://dpaste.com/api/v2/
         let mut api_endpoint: Url = self.url.clone();
@@ -63,5 +62,11 @@ impl PasteClient for Backend {
 
         let url = Url::parse(&text)?;
         Ok(url)
+    }
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "dpaste_com | {}", self.url)
     }
 }

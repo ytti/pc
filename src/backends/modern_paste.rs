@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
@@ -33,8 +35,7 @@ pub struct Opt {
 
 pub const NAME: &'static str = "modern_paste";
 
-pub fn info() -> &'static str {
-    r#"Modern Paste backend.
+pub const INFO: &'static str = r#"Modern Paste backend.
 modern-paste source: <https://github.com/LINKIWI/modern-paste/>.
 Example popular instance of this is <https://paste.fedoraproject.org/>.
 
@@ -42,20 +43,20 @@ Example config block:
 
     [servers.fedora]
     backend = "modern_paste"
-    url = "https://paste.fedoraproject.org/""#
-}
-
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            url: opt.url.unwrap_or(self.url),
-            title: opt.title.or(self.title),
-        }))
-    }
-}
+    url = "https://paste.fedoraproject.org/""#;
 
 impl PasteClient for Backend {
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(url) = opt.url {
+            self.url = url;
+        }
+        if opt.title.is_some() {
+            self.title = opt.title;
+        }
+        Ok(())
+    }
+
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
 
@@ -101,4 +102,10 @@ struct PasteResponse {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     url: Url,
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "modern_paste | {}", self.url)
+    }
 }

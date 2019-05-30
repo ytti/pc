@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use structopt::StructOpt;
@@ -27,8 +29,7 @@ pub struct Opt {
 
 pub const NAME: &'static str = "haste";
 
-pub fn info() -> &'static str {
-    r#"Hastebin backend. Supports any servers running Haste
+pub const INFO: &'static str = r#"Hastebin backend. Supports any servers running Haste
 <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
 <https://hastebin.com/>.
 
@@ -36,19 +37,17 @@ Example config block:
 
     [servers.hastebin]
     backend = "haste"
-    url = "https://hastebin.com/""#
-}
-
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            url: opt.url.unwrap_or(self.url),
-        }))
-    }
-}
+    url = "https://hastebin.com/""#;
 
 impl PasteClient for Backend {
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(url) = opt.url {
+            self.url = url;
+        }
+        Ok(())
+    }
+
     fn paste(&self, data: String) -> PasteResult<Url> {
         let client = Client::new();
 
@@ -65,4 +64,10 @@ impl PasteClient for Backend {
 #[derive(Deserialize)]
 struct HastePasteResponse {
     key: String,
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "haste | {}", self.url)
+    }
 }

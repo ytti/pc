@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use reqwest::multipart::Form;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -28,26 +30,24 @@ pub struct Opt {
 
 pub const NAME: &'static str = "vpaste";
 
-pub fn info() -> &'static str {
+pub const INFO: &'static str =
     r#"Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.
 
 Example config block:
 
     [servers.vp]
     backend = "vpaste"
-    url = "http://vpaste.net/""#
-}
-
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            url: opt.url.unwrap_or(self.url),
-        }))
-    }
-}
+    url = "http://vpaste.net/""#;
 
 impl PasteClient for Backend {
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(url) = opt.url {
+            self.url = url;
+        }
+        Ok(())
+    }
+
     fn paste(&self, data: String) -> PasteResult<Url> {
         let form = Form::new().text("text", data);
         let res = Client::new()
@@ -55,5 +55,11 @@ impl PasteClient for Backend {
             .multipart(form)
             .send()?;
         Ok(res.url().to_owned())
+    }
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "vpaste | {}", self.url)
     }
 }

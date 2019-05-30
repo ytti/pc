@@ -214,7 +214,9 @@ fn run() -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Op::ListBackends => {
-            for name in BACKENDS_INFO.keys() {
+            let mut names = BACKENDS_INFO.keys().collect::<Vec<&&str>>();
+            names.sort();
+            for name in names {
                 println!("{}", name);
             }
             Ok(())

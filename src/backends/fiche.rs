@@ -1,3 +1,4 @@
+use std::fmt::{self, Display, Formatter};
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
@@ -36,7 +37,7 @@ pub fn default_port() -> u16 {
     9999
 }
 
-pub fn info() -> &'static str {
+pub const INFO: &'static str =
     r#"Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
 termbin.com)
 
@@ -46,20 +47,20 @@ Example config block:
     backend = "fiche"
     url = "termbin.com"
     # default port if missing is 9999
-    port = 9999"#
-}
-
-impl Backend {
-    pub fn apply_args(self, args: Vec<String>) -> clap::Result<Box<dyn PasteClient>> {
-        let opt = Opt::from_iter_safe(args)?;
-        Ok(Box::new(Self {
-            domain: opt.domain.unwrap_or(self.domain),
-            port: opt.port.unwrap_or(self.port),
-        }))
-    }
-}
+    port = 9999"#;
 
 impl PasteClient for Backend {
+    fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
+        let opt = Opt::from_iter_safe(args)?;
+        if let Some(domain) = opt.domain {
+            self.domain = domain;
+        }
+        if let Some(port) = opt.port {
+            self.port = port;
+        }
+        Ok(())
+    }
+
     fn paste(&self, data: String) -> PasteResult<Url> {
         let mut stream = TcpStream::connect(format!("{}:{}", self.domain, self.port))?;
 
@@ -71,5 +72,11 @@ impl PasteClient for Backend {
         let sanitized_data = response.trim_matches(char::from(0)).trim_end();
         let url = Url::parse(sanitized_data)?;
         Ok(url)
+    }
+}
+
+impl Display for Backend {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "fiche | {}:{}", self.domain, self.port)
     }
 }

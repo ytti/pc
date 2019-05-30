@@ -29,7 +29,8 @@ struct Opt {
 
 pub const NAME: &'static str = "generic";
 
-pub const INFO: &'static str = r#"Generic paste service backend. Supports any pastebin services with the following two
+pub const INFO: &'static str =
+    r#"Generic paste service backend. Supports any pastebin services with the following two
 properties:
 
 1. data is uploaded via plain text in the POST request body to the base url.
@@ -40,7 +41,6 @@ Example config block:
     [servers.paste_rs]
     backend = "generic"
     url = "https://paste.rs/""#;
-
 
 impl PasteClient for Backend {
     fn paste(&self, data: String) -> PasteResult<Url> {

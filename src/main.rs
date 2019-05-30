@@ -62,7 +62,7 @@ To use this, add a server block under the heading [servers.{0}] in the config to
         }
     };
 
-    server_args.insert(0, server_choice);
+    server_args.insert(0, server_choice.clone());
 
     let mut backend = backend_config.clone().extract_backend();
 
@@ -70,7 +70,11 @@ To use this, add a server block under the heading [servers.{0}] in the config to
         Err(e) => {
             match e.kind {
                 clap::ErrorKind::HelpDisplayed => {
-                    eprintln!("Config for this server block:\n\n{:#?}\n", &backend);
+                    eprintln!(
+                        "[servers.{}]\n{}---\n",
+                        server_choice,
+                        toml::to_string(&backend_config).expect("must be valid")
+                    );
                 }
                 _ => {}
             }

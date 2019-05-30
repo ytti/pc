@@ -12,7 +12,6 @@ pub mod generic;
 // pub mod dpaste_com;
 // pub mod fiche;
 
-
 lazy_static! {
         pub static ref BACKENDS_INFO: HashMap<&'static str, &'static str> = {
         let mut m = HashMap::new();

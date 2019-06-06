@@ -9,7 +9,6 @@ use crate::error::PasteResult;
 use crate::types::PasteClient;
 use crate::utils::{deserialize_url, serialize_url};
 
-// TODO: add support for other optional config ( https://paste.fedoraproject.org/api )
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
@@ -18,19 +17,35 @@ pub struct Backend {
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
     pub title: Option<String>,
+    /// unix timestamp at which the paste should expire
+    pub expiry_time: Option<u64>,
+    pub language: Option<String>,
+    pub password: Option<String>,
+    pub api_key: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
 #[structopt(about = "modern_paste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Title for the paste
+    /// Title for the paste (NONE = untitled)
     #[structopt(short = "t", long = "title")]
     title: Option<String>,
-
     /// Url
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
+    /// unix timestamp at which the paste should expire (0 = use server default expiry)
+    #[structopt(short = "e", long = "expiry-time")]
+    pub expiry_time: Option<u64>,
+    /// language/filetype/syntax
+    #[structopt(short = "l", long = "language")]
+    pub language: Option<String>,
+    /// protect paste access with this password (NONE = no password)
+    #[structopt(short = "p", long = "password")]
+    pub password: Option<String>,
+    /// upload paste as authenticated user (NONE = force anon)
+    #[structopt(short = "k", long = "api-key")]
+    pub api_key: Option<String>,
 }
 
 pub const NAME: &'static str = "modern_paste";
@@ -43,7 +58,16 @@ Example config block:
 
     [servers.fedora]
     backend = "modern_paste"
-    url = "https://paste.fedoraproject.org/""#;
+    url = "https://paste.fedoraproject.org/"
+
+    # optionals
+    title = "my paste" # default untitled
+    expiry_time = 1559817269 # default is expiry set by server
+    language = "python" # default plain text
+    password = "password123" # default not password protected
+    # default anonymous pastes
+    api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+"#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
@@ -51,8 +75,36 @@ impl PasteClient for Backend {
         if let Some(url) = opt.url {
             self.url = url;
         }
-        if opt.title.is_some() {
-            self.title = opt.title;
+        if let Some(title) = opt.title {
+            if title == "NONE" {
+                self.title = None;
+            } else {
+                self.title = Some(title);
+            }
+        }
+        if let Some(expiry_time) = opt.expiry_time {
+            if expiry_time == 0 {
+                self.expiry_time = None;
+            } else {
+                self.expiry_time = Some(expiry_time);
+            }
+        }
+        if opt.language.is_some() {
+            self.language = opt.language;
+        }
+        if let Some(password) = opt.password {
+            if password == "NONE" {
+                self.password = None;
+            } else {
+                self.password = Some(password);
+            }
+        }
+        if let Some(api_key) = opt.api_key {
+            if api_key == "NONE" {
+                self.api_key = None;
+            } else {
+                self.api_key = Some(api_key);
+            }
         }
         Ok(())
     }
@@ -61,10 +113,11 @@ impl PasteClient for Backend {
         let client = Client::new();
 
         let params = PasteParams {
+            api_key: self.api_key.clone(),
             contents: data,
-            expiry_time: None,
-            language: None,
-            password: None,
+            expiry_time: self.expiry_time.clone(),
+            language: self.language.clone(),
+            password: self.password.clone(),
             title: self.title.clone(),
         };
 
@@ -72,24 +125,28 @@ impl PasteClient for Backend {
         api_endpoint.set_path("/api/paste/submit");
         let data: PasteResponse = client.post(api_endpoint).json(&params).send()?.json()?;
 
-        match data.success {
-            Some(true) => {
-                return Err("api returned success: false".to_owned().into());
-            }
-            _ => {}
+        if let Some(false) = data.success {
+            return Err(format!("api returned failure: false {:?}", data.failure_name).into());
         }
 
-        Ok(data.url)
+        match data.url {
+            None => Err("no url returned in response".to_owned().into()),
+            Some(ref url) => {
+                let url = Url::parse(url)?;
+                Ok(url)
+            }
+        }
     }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 struct PasteParams {
     contents: String,
-    expiry_time: Option<u32>, // default: no expiry
+    expiry_time: Option<u64>, // default: no expiry
     language: Option<String>, // default: plain text
     password: Option<String>, // default: no password
     title: Option<String>,    // default: "Untitled"
+    api_key: Option<String>,  // default: anon
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -98,10 +155,8 @@ struct PasteResponse {
     // https://paste.fedoraproject.org/api
     success: Option<bool>,
     message: Option<String>,
-    contents: String,
-    #[serde(deserialize_with = "deserialize_url")]
-    #[serde(serialize_with = "serialize_url")]
-    url: Url,
+    failure_name: Option<String>,
+    url: Option<String>,
 }
 
 impl Display for Backend {

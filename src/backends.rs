@@ -11,6 +11,7 @@ pub mod haste;
 pub mod modern_paste;
 pub mod onetimesecret;
 pub mod paste_rs;
+pub mod sprunge;
 pub mod vpaste;
 
 lazy_static! {
@@ -22,6 +23,7 @@ lazy_static! {
         m.insert(haste::NAME, haste::INFO);
         m.insert(modern_paste::NAME, modern_paste::INFO);
         m.insert(onetimesecret::NAME, onetimesecret::INFO);
+        m.insert(sprunge::NAME, sprunge::INFO);
         m.insert(vpaste::NAME, vpaste::INFO);
         m
     };
@@ -38,6 +40,7 @@ pub enum BackendConfig {
     Haste(haste::Backend),
     ModernPaste(modern_paste::Backend),
     Onetimesecret(onetimesecret::Backend),
+    Sprunge(sprunge::Backend),
     Vpaste(vpaste::Backend),
 }
 
@@ -50,6 +53,7 @@ impl BackendConfig {
             BackendConfig::Haste(backend) => Box::new(backend),
             BackendConfig::ModernPaste(backend) => Box::new(backend),
             BackendConfig::Onetimesecret(backend) => Box::new(backend),
+            BackendConfig::Sprunge(backend) => Box::new(backend),
             BackendConfig::Vpaste(backend) => Box::new(backend),
         }
     }

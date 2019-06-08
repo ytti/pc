@@ -89,3 +89,13 @@ url = "http://dpaste.com/"
 backend = "onetimesecret"
 url = "https://onetimesecret.com/"
 
+
+[servers.sprunge]
+backend = "sprunge"
+url = "http://sprunge.us/"
+
+# optional; default is raw/plaintext. If language provided, the text is shown
+# with line numbers and has pygments based html syntax highlighting. Note that
+# this is a client-side option that takes effect by adding a query paramater to
+# the resulting paste url.
+language = "py"

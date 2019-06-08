@@ -133,7 +133,11 @@ impl PasteClient for Backend {
             .text()?;
 
         match Url::parse(&text) {
-            Err(e) => Err(format!("could not parse response as url: {}\napi response body: {}", e, text).into()),
+            Err(e) => Err(format!(
+                "could not parse response as url: {}\napi response body: {}",
+                e, text
+            )
+            .into()),
             Ok(url) => Ok(url),
         }
     }

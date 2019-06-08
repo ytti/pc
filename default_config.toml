@@ -32,3 +32,7 @@ url = "http://dpaste.com/"
 [servers.ots]
 backend = "onetimesecret"
 url = "https://onetimesecret.com/"
+
+[servers.sprunge]
+backend = "sprunge"
+url = "http://sprunge.us/"

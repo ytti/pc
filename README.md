@@ -144,8 +144,10 @@ following:
    are with `pc -c NONE dump-config` or see the default config file in this
    repo.
 
-See [default_config.toml](./default_config.toml) for an example config file.
-(This is also baked into the app as the default config.)
+See [example_config.toml](./example_config.toml) for an example config file
+with an exhaustive listing of options.  See also
+[default_config.toml](./default_config.toml), which gets compiled into the
+binary and used as the default config if no config file found.
 
 
 ## Supported server backends
@@ -158,7 +160,7 @@ See [default_config.toml](./default_config.toml) for an example config file.
 | [Modern Paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |
 | [ONE-TIME SECRET](https://github.com/onetimesecret/onetimesecret)\* | `onetimesecret` | https://onetimesecret.com/       |
 | [paste.rs](https://paste.rs/web)                                    | `paste_rs`      | https://paste.rs/                |
-| [vpaste](http://pileus.org/tools/vpaste)                            | `vpaste`        | http://vpaste.net/               |
+| [vpaste](http://pileus.org/tools/vpaste)\*                          | `vpaste`        | http://vpaste.net/               |
 
 \*: open source; possible to self-host or find alternate public servers.
 

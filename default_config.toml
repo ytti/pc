@@ -1,17 +1,9 @@
+# This config is compiled into the binary and is loaded if no config file
+# found.
+
 [main]
-# optional; if missing, will use random server entry
-server = "rs"
+server = "vpaste"
 
-## optional; if missing, will not log url history.
-## if set, will append url of successful pastes to this file, one per line,
-## newest to the bottom. The file is created if not existing. Parent directories
-## will not be created. If paste successful but failed to write histfile, a
-## warning will be printed to stderr and will exit with a non-zero exit code.
-# histfile = "/tmp/paste_history.txt"
-
-[servers]
-
-# must be at least one server defined
 [servers.vpaste]
 backend = "vpaste"
 url = "http://vpaste.net/"
@@ -27,7 +19,6 @@ url = "https://hastebin.com/"
 [servers.termbin]
 backend = "fiche"
 domain = "termbin.com"
-# port is optional; defaults to 9999
 port = 9999
 
 [servers.fedora]

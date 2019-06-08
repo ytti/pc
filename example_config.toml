@@ -1,0 +1,91 @@
+# Example configuration
+
+[main]
+# Default server if none given on command line.
+# Optional; if missing, will use arbitrary server entry
+server = "rs"
+
+# Optional; if missing, will not log url history.  if set, will append url of
+# successful pastes to this file, one per line, newest to the bottom. The file
+# is created if not existing. Parent directories will not be created. If paste
+# successful but failed to write to histfile, a warning will be printed to
+# stderr and will exit with a non-zero exit code.
+# Relative paths will be resolved relative to the current working directory.
+histfile = "/tmp/paste_history.txt"
+
+
+# Now each "server" is a configuration stored under a certain key in the
+# `servers` hashmap. The key (eg. "vpaste" in the case of "servers.vpaste") is
+# what is used to select a server on the command line and the default `server`
+# option. Note that this can be different to the value of the `backend` for a
+# server block, and multiple server blocks can be defined using the same
+# backend (eg. for different public servers or different default config).
+
+# Must have at least one server defined in the config, otherwise the program
+# will exit on error.
+
+# What follows is an example server block for each backend and an example value
+# for each possible option along with comments detailing usage. Each backend
+# can have a different set of options. When defining your own config, use this
+# example file as a reference, or see the output of `pc show-backend
+# <backendname>`.
+
+[servers.vpaste]
+# supports any servers running http://pileus.org/tools/vpaste
+backend = "vpaste"
+url = "http://vpaste.net/"
+
+
+[servers.rs]
+backend = "paste_rs"
+url = "https://paste.rs/"
+
+
+[servers.haste]
+# supports any servers running https://github.com/seejohnrun/haste-server
+backend = "haste"
+url = "https://hastebin.com/"
+
+
+[servers.termbin]
+# supports any servers running https://github.com/solusipse/fiche
+backend = "fiche"
+domain = "termbin.com"
+# port is optional; defaults to 9999
+port = 9999
+
+
+[servers.fedora]
+# supports any servers running https://github.com/LINKIWI/modern-paste
+backend = "modern_paste"
+url = "https://paste.fedoraproject.org/"
+
+# optional; title for the paste; default is no title (set by the server; usually
+# 'Untitled')
+title = "my paste"
+
+# optional; unix timestamp at which the paste url should expire. Default is set
+# by the server (eg. fedora paste defaults to a week iirc)
+expiry_time = 1559817269 # default is expiry set by server
+
+# optional; filetype/syntax/language highlighting to use. Default is plain text
+# (set by the server).
+language = "python"
+
+# password protect the paste url. Optional - default is not password protected.
+password = "password123"
+
+# optional api key to authenticate paste upload requests. Default is submit as
+# anonymous.
+api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+
+
+[servers.dpastecom]
+backend = "dpaste_com"
+url = "http://dpaste.com/"
+
+[servers.ots]
+# supports any servers running https://github.com/onetimesecret/onetimesecret
+backend = "onetimesecret"
+url = "https://onetimesecret.com/"
+

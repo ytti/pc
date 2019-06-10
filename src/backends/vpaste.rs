@@ -8,7 +8,7 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{deserialize_url, serialize_url, override_if_present};
+use crate::utils::{deserialize_url, override_if_present, serialize_url};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]

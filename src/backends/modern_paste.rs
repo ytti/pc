@@ -7,7 +7,10 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{deserialize_url, serialize_url, override_if_present, override_option_with_option_none, override_option_if_present};
+use crate::utils::{
+    deserialize_url, override_if_present, override_option_if_present,
+    override_option_with_option_none, serialize_url,
+};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -18,7 +21,8 @@ pub struct Backend {
     pub url: Url,
     pub title: Option<String>,
     /// unix timestamp at which the paste should expire
-    pub expiry_time: Option<u64>,
+    #[serde(default)]
+    pub expiry_time: u64,
     pub language: Option<String>,
     pub password: Option<String>,
     pub api_key: Option<String>,
@@ -73,13 +77,7 @@ impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        if let Some(expiry_time) = opt.expiry_time {
-            if expiry_time == 0 {
-                self.expiry_time = None;
-            } else {
-                self.expiry_time = Some(expiry_time);
-            }
-        }
+        override_if_present(&mut self.expiry_time, opt.expiry_time);
         override_option_with_option_none(&mut self.title, opt.title);
         override_option_with_option_none(&mut self.password, opt.password);
         override_option_with_option_none(&mut self.api_key, opt.api_key);
@@ -93,7 +91,10 @@ impl PasteClient for Backend {
         let params = PasteParams {
             api_key: self.api_key.clone(),
             contents: data,
-            expiry_time: self.expiry_time.clone(),
+            expiry_time: match self.expiry_time.clone() {
+                0 => None,
+                e => Some(e),
+            },
             language: self.language.clone(),
             password: self.password.clone(),
             title: self.title.clone(),

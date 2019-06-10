@@ -89,6 +89,26 @@ url = "http://dpaste.com/"
 backend = "onetimesecret"
 url = "https://onetimesecret.com/"
 
+# Optional options.
+
+# password protect the secret
+passphrase = "password123"
+
+# set the time the secret is allowed to live in seconds
+ttl = 86400 # 1 day of seconds
+
+# tell the server to email the secret link to this address. Note that
+# onetimesecret.com only allow this with authenticated uploads. (anonymous
+# uploads also have other restrictions; see website)
+recipient = "user@example.com"
+
+# username and api token; if these are both provided, the program will
+# attempt to authenticate with them. Note that either both must be provided, or
+# neither. It is ok to provide them in stages - eg. username in the config file
+# and api_token on the command line.
+username = "myuser@example.com"
+api_key = "DEADBEEF"
+
 
 [servers.sprunge]
 backend = "sprunge"

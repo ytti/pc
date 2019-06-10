@@ -51,7 +51,6 @@ pub fn write_hist(paste_url: Url, path: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-
 /// when the current value is an optional string and needs to be optionally overridden with a
 /// string, or forced to None with an explicit "NONE".
 pub fn override_option_with_option_none(old: &mut Option<String>, new: Option<String>) {

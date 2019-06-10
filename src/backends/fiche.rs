@@ -8,6 +8,7 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
+use crate::utils::override_if_present;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -52,12 +53,8 @@ Example config block:
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
-        if let Some(domain) = opt.domain {
-            self.domain = domain;
-        }
-        if let Some(port) = opt.port {
-            self.port = port;
-        }
+        override_if_present(&mut self.domain, opt.domain);
+        override_if_present(&mut self.port, opt.port);
         Ok(())
     }
 

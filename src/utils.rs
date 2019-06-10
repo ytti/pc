@@ -50,3 +50,32 @@ pub fn write_hist(paste_url: Url, path: &str) -> Result<(), Box<dyn Error>> {
     file.write(format!("{}\n", paste_url).as_bytes())?;
     Ok(())
 }
+
+
+/// when the current value is an optional string and needs to be optionally overridden with a
+/// string, or forced to None with an explicit "NONE".
+pub fn override_option_with_option_none(old: &mut Option<String>, new: Option<String>) {
+    if let Some(new) = new {
+        if new == "NONE" {
+            *old = None;
+        } else {
+            *old = Some(new);
+        }
+    }
+}
+
+/// when the current value is an optional value and needs to be overridden if a new value is
+/// present
+pub fn override_option_if_present<T>(old: &mut Option<T>, new: Option<T>) {
+    if new.is_some() {
+        *old = new;
+    }
+}
+
+/// when the current value is a concrete value and needs to be overridden if a new value is
+/// present
+pub fn override_if_present<T>(old: &mut T, new: Option<T>) {
+    if let Some(new) = new {
+        *old = new;
+    }
+}

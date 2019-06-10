@@ -7,7 +7,7 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{deserialize_url, serialize_url};
+use crate::utils::{deserialize_url, serialize_url, override_if_present, override_option_with_option_none, override_option_if_present};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -72,16 +72,7 @@ Example config block:
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
-        if let Some(url) = opt.url {
-            self.url = url;
-        }
-        if let Some(title) = opt.title {
-            if title == "NONE" {
-                self.title = None;
-            } else {
-                self.title = Some(title);
-            }
-        }
+        override_if_present(&mut self.url, opt.url);
         if let Some(expiry_time) = opt.expiry_time {
             if expiry_time == 0 {
                 self.expiry_time = None;
@@ -89,23 +80,10 @@ impl PasteClient for Backend {
                 self.expiry_time = Some(expiry_time);
             }
         }
-        if opt.language.is_some() {
-            self.language = opt.language;
-        }
-        if let Some(password) = opt.password {
-            if password == "NONE" {
-                self.password = None;
-            } else {
-                self.password = Some(password);
-            }
-        }
-        if let Some(api_key) = opt.api_key {
-            if api_key == "NONE" {
-                self.api_key = None;
-            } else {
-                self.api_key = Some(api_key);
-            }
-        }
+        override_option_with_option_none(&mut self.title, opt.title);
+        override_option_with_option_none(&mut self.password, opt.password);
+        override_option_with_option_none(&mut self.api_key, opt.api_key);
+        override_option_if_present(&mut self.language, opt.language);
         Ok(())
     }
 

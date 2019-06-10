@@ -7,7 +7,7 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{deserialize_url, serialize_url};
+use crate::utils::{deserialize_url, serialize_url, override_if_present};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -42,9 +42,7 @@ Example config block:
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
-        if let Some(url) = opt.url {
-            self.url = url;
-        }
+        override_if_present(&mut self.url, opt.url);
         Ok(())
     }
 

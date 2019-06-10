@@ -8,9 +8,8 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{deserialize_url, serialize_url};
+use crate::utils::{deserialize_url, serialize_url, override_option_with_option_none, override_if_present};
 
-// TODO: add support for syntax, expiry_days, poster
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
@@ -73,30 +72,10 @@ Example config block:
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
-        if let Some(url) = opt.url {
-            self.url = url;
-        }
-        if let Some(syntax) = opt.syntax {
-            if syntax == "NONE" {
-                self.syntax = None;
-            } else {
-                self.syntax = Some(syntax);
-            }
-        }
-        if let Some(poster) = opt.poster {
-            if poster == "NONE" {
-                self.poster = None;
-            } else {
-                self.poster = Some(poster);
-            }
-        }
-        if let Some(title) = opt.title {
-            if title == "NONE" {
-                self.title = None;
-            } else {
-                self.title = Some(title);
-            }
-        }
+        override_if_present(&mut self.url, opt.url);
+        override_option_with_option_none(&mut self.syntax, opt.syntax);
+        override_option_with_option_none(&mut self.poster, opt.poster);
+        override_option_with_option_none(&mut self.title, opt.title);
         if let Some(expiry_days) = opt.expiry_days {
             self.expiry_days = expiry_days;
         }

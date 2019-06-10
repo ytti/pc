@@ -5,6 +5,10 @@ server. It supports many different pastebin style servers, and is highly
 configurable.  It aims to be simple, work with stdin/stdout, and adhere to the
 unix philosophy.
 
+Please note that until v1 is released, the command line args api and config
+file specification should be considered unstable. Anything could change without
+notice. Please avoid using this non-interactively if you plan to update it
+often and do not want to debug failures because of api changes.
 
 ## Features
 

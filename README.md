@@ -50,14 +50,15 @@ To see a server block's configuration, backend, and allowed args:
 
 ```
 $ pc fedora --help
-Config for this server block:
-
-ModernPaste(
-    Backend {
-        url: "https://paste.fedoraproject.org/",
-        title: None
-    }
-)
+[servers.fedora]
+backend = "modern_paste"
+url = "https://paste.fedoraproject.org/"
+title = "my paste"
+expiry_time = 1559817269
+language = "python"
+password = "password123"
+api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+---
 
 modern_paste backend
 
@@ -69,8 +70,12 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -t, --title <title>    Title for the paste
-    -u, --url <url>        Url
+    -k, --api-key <api_key>            upload paste as authenticated user (NONE = force anon)
+    -e, --expiry-time <expiry_time>    unix timestamp at which the paste should expire (0 = use server default expiry)
+    -l, --language <language>          language/filetype/syntax
+    -p, --password <password>          protect paste access with this password (NONE = no password)
+    -t, --title <title>                Title for the paste (NONE = untitled)
+    -u, --url <url>                    Url
 ```
 
 Show a concise list of configured servers available to use:
@@ -80,6 +85,7 @@ $ pc list
 rs => paste_rs | https://paste.rs/ [default]
 vpaste => vpaste | http://vpaste.net/
 haste => haste | https://hastebin.com/
+...
 ```
 
 List all supported backends:
@@ -115,7 +121,9 @@ $ pc dump-config
 <toml config as currently used>
 ```
 
-Copy the default config to the user config file. Useful for first setup.
+Copy the default config to the user config file. Could be useful for first
+setup (although the [example config](./example_config.toml) with comments may
+be more helpful).
 
 ```
 $ pc -c NONE dump-config > ~/.config/pc/config.toml
@@ -154,11 +162,11 @@ binary and used as the default config if no config file found.
 
 | server spec                                                         | backend         | example instance                 |
 | ------                                                              | -------         | ---------------                  |
-| [Haste](https://github.com/seejohnrun/haste-server)\*               | `haste`         | https://hastebin.com/            |
+| [haste](https://github.com/seejohnrun/haste-server)\*               | `haste`         | https://hastebin.com/            |
 | [dpaste.com](http://dpaste.com/api/v2/)                             | `dpaste_com`    | http://dpaste.com/               |
 | [fiche](https://github.com/solusipse/fiche)\*                       | `fiche`         | https://termbin.com/             |
-| [Modern Paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |
-| [ONE-TIME SECRET](https://github.com/onetimesecret/onetimesecret)\* | `onetimesecret` | https://onetimesecret.com/       |
+| [modern paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |
+| [one-time secret](https://github.com/onetimesecret/onetimesecret)\* | `onetimesecret` | https://onetimesecret.com/       |
 | [paste.rs](https://paste.rs/web)                                    | `paste_rs`      | https://paste.rs/                |
 | [sprunge](https://github.com/rupa/sprunge)\*                        | `sprunge`       | http://sprunge.us/               |
 | [vpaste](http://pileus.org/tools/vpaste)\*                          | `vpaste`        | http://vpaste.net/               |

@@ -119,3 +119,8 @@ url = "http://sprunge.us/"
 # this is a client-side option that takes effect by adding a query paramater to
 # the resulting paste url.
 language = "py"
+
+
+[servers.pip]
+backend = "pipfi"
+url = "http://p.ip.fi/"

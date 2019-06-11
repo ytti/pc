@@ -172,6 +172,7 @@ binary and used as the default config if no config file found.
 | [modern paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |
 | [one-time secret](https://github.com/onetimesecret/onetimesecret)\* | `onetimesecret` | https://onetimesecret.com/       |
 | [paste.rs](https://paste.rs/web)                                    | `paste_rs`      | https://paste.rs/                |
+| [p.ip.fi](http://p.ip.fi/)                                          | `pipfi`         | http://p.ip.fi/                  |
 | [sprunge](https://github.com/rupa/sprunge)\*                        | `sprunge`       | http://sprunge.us/               |
 | [vpaste](http://pileus.org/tools/vpaste)\*                          | `vpaste`        | http://vpaste.net/               |
 

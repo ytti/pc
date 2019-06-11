@@ -8,9 +8,7 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{
-    deserialize_url, override_if_present, override_option_with_option_none, serialize_url,
-};
+use crate::utils::{deserialize_url, override_if_present, serialize_url};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -19,60 +17,49 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
-    pub language: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(about = "sprunge backend")]
+#[structopt(about = "pipfi backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
     /// Url
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-
-    /// Optional language for syntax highlighting (default plain text; NONE = force default)
-    #[structopt(short = "l", long = "language")]
-    language: Option<String>,
 }
 
-pub const NAME: &'static str = "sprunge";
+pub const NAME: &'static str = "pipfi";
 
-pub const INFO: &'static str =
-    r#"Sprunge backend. Supports any servers running sprunge <https://github.com/rupa/sprunge>.
+pub const INFO: &'static str = r#"Pipfi backend. Supports <http://p.ip.fi/>.
 
 Example config block:
 
-    [servers.sprunge]
-    backend = "sprunge"
-    url = "http://sprunge.us/"
-    language = "py"
+    [servers.pip]
+    backend = "pipfi"
+    url = "http://p.ip.fi/"
 "#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_option_with_option_none(&mut self.language, opt.language);
         Ok(())
     }
 
     fn paste(&self, data: String) -> PasteResult<Url> {
-        let form = Form::new().text("sprunge", data);
+        let form = Form::new().text("paste", data);
         let text = Client::new()
             .post(self.url.clone())
             .multipart(form)
             .send()?
             .text()?;
-        let mut url = Url::parse(&text)?;
-        if let Some(ref lang) = self.language {
-            url.set_query(Some(lang));
-        }
+        let url = Url::parse(&text)?;
         Ok(url)
     }
 }
 
 impl Display for Backend {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "sprunge | {}", self.url)
+        write!(f, "pipfi | {}", self.url)
     }
 }

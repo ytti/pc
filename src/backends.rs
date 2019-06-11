@@ -11,6 +11,7 @@ pub mod haste;
 pub mod modern_paste;
 pub mod onetimesecret;
 pub mod paste_rs;
+pub mod pipfi;
 pub mod sprunge;
 pub mod vpaste;
 
@@ -25,6 +26,7 @@ lazy_static! {
         m.insert(onetimesecret::NAME, onetimesecret::INFO);
         m.insert(sprunge::NAME, sprunge::INFO);
         m.insert(vpaste::NAME, vpaste::INFO);
+        m.insert(pipfi::NAME, pipfi::INFO);
         m
     };
 }
@@ -42,6 +44,7 @@ pub enum BackendConfig {
     Onetimesecret(onetimesecret::Backend),
     Sprunge(sprunge::Backend),
     Vpaste(vpaste::Backend),
+    Pipfi(pipfi::Backend),
 }
 
 impl BackendConfig {
@@ -55,6 +58,7 @@ impl BackendConfig {
             BackendConfig::Onetimesecret(backend) => Box::new(backend),
             BackendConfig::Sprunge(backend) => Box::new(backend),
             BackendConfig::Vpaste(backend) => Box::new(backend),
+            BackendConfig::Pipfi(backend) => Box::new(backend),
         }
     }
 }

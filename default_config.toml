@@ -36,3 +36,7 @@ url = "https://onetimesecret.com/"
 [servers.sprunge]
 backend = "sprunge"
 url = "http://sprunge.us/"
+
+[servers.pip]
+backend = "pipfi"
+url = "http://p.ip.fi/"

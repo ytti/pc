@@ -124,3 +124,16 @@ language = "py"
 [servers.pip]
 backend = "pipfi"
 url = "http://p.ip.fi/"
+
+
+[servers.dpaste]
+# supports any servers running <https://github.com/bartTC/dpaste>
+backend = "dpaste"
+url = "https://dpaste.de/"
+
+# optional; syntax highlighting / filetype (default is set by server)
+lexer = "c"
+
+# optional; lifetime in seconds. Default server config also supports special
+# values like "onetime" and "never".
+expires = "3600"

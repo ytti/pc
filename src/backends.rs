@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::PasteClient;
 
+pub mod dpaste;
 pub mod dpaste_com;
 pub mod fiche;
 pub mod haste;
@@ -18,6 +19,7 @@ pub mod vpaste;
 lazy_static! {
     pub static ref BACKENDS_INFO: HashMap<&'static str, &'static str> = {
         let mut m = HashMap::new();
+        m.insert(dpaste::NAME, dpaste::INFO);
         m.insert(dpaste_com::NAME, dpaste_com::INFO);
         m.insert(fiche::NAME, fiche::INFO);
         m.insert(haste::NAME, haste::INFO);
@@ -36,6 +38,7 @@ lazy_static! {
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub enum BackendConfig {
+    Dpaste(dpaste::Backend),
     DpasteCom(dpaste_com::Backend),
     Fiche(fiche::Backend),
     Haste(haste::Backend),
@@ -50,6 +53,7 @@ pub enum BackendConfig {
 impl BackendConfig {
     pub fn extract_backend(self) -> Box<dyn PasteClient> {
         match self {
+            BackendConfig::Dpaste(backend) => Box::new(backend),
             BackendConfig::DpasteCom(backend) => Box::new(backend),
             BackendConfig::Fiche(backend) => Box::new(backend),
             BackendConfig::Haste(backend) => Box::new(backend),

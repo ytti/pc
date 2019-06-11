@@ -40,3 +40,7 @@ url = "http://sprunge.us/"
 [servers.pip]
 backend = "pipfi"
 url = "http://p.ip.fi/"
+
+[servers.dpaste]
+backend = "dpaste"
+url = "https://dpaste.de/"

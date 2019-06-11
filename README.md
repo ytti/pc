@@ -167,6 +167,7 @@ binary and used as the default config if no config file found.
 | server spec                                                         | backend         | example instance                 |
 | ------                                                              | -------         | ---------------                  |
 | [haste](https://github.com/seejohnrun/haste-server)\*               | `haste`         | https://hastebin.com/            |
+| [dpaste](https://github.com/bartTC/dpaste)                          | `dpaste`        | https://dpaste.de/               |
 | [dpaste.com](http://dpaste.com/api/v2/)                             | `dpaste_com`    | http://dpaste.com/               |
 | [fiche](https://github.com/solusipse/fiche)\*                       | `fiche`         | https://termbin.com/             |
 | [modern paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |

@@ -20,13 +20,13 @@ lazy_static! {
         let mut m = HashMap::new();
         m.insert(dpaste_com::NAME, dpaste_com::INFO);
         m.insert(fiche::NAME, fiche::INFO);
-        m.insert(paste_rs::NAME, paste_rs::INFO);
         m.insert(haste::NAME, haste::INFO);
         m.insert(modern_paste::NAME, modern_paste::INFO);
         m.insert(onetimesecret::NAME, onetimesecret::INFO);
+        m.insert(paste_rs::NAME, paste_rs::INFO);
+        m.insert(pipfi::NAME, pipfi::INFO);
         m.insert(sprunge::NAME, sprunge::INFO);
         m.insert(vpaste::NAME, vpaste::INFO);
-        m.insert(pipfi::NAME, pipfi::INFO);
         m
     };
 }
@@ -38,13 +38,13 @@ lazy_static! {
 pub enum BackendConfig {
     DpasteCom(dpaste_com::Backend),
     Fiche(fiche::Backend),
-    PasteRs(paste_rs::Backend),
     Haste(haste::Backend),
     ModernPaste(modern_paste::Backend),
     Onetimesecret(onetimesecret::Backend),
+    PasteRs(paste_rs::Backend),
+    Pipfi(pipfi::Backend),
     Sprunge(sprunge::Backend),
     Vpaste(vpaste::Backend),
-    Pipfi(pipfi::Backend),
 }
 
 impl BackendConfig {
@@ -52,13 +52,13 @@ impl BackendConfig {
         match self {
             BackendConfig::DpasteCom(backend) => Box::new(backend),
             BackendConfig::Fiche(backend) => Box::new(backend),
-            BackendConfig::PasteRs(backend) => Box::new(backend),
             BackendConfig::Haste(backend) => Box::new(backend),
             BackendConfig::ModernPaste(backend) => Box::new(backend),
             BackendConfig::Onetimesecret(backend) => Box::new(backend),
+            BackendConfig::PasteRs(backend) => Box::new(backend),
+            BackendConfig::Pipfi(backend) => Box::new(backend),
             BackendConfig::Sprunge(backend) => Box::new(backend),
             BackendConfig::Vpaste(backend) => Box::new(backend),
-            BackendConfig::Pipfi(backend) => Box::new(backend),
         }
     }
 }

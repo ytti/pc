@@ -62,8 +62,9 @@ Example config block:
     # see <http://dpaste.com/api/v2/syntax-choices/> for list of supported names
     syntax = "js"
 
-    # optional; default is use server default (7 days). must be in inclusive range 0 - 31536000 (1 year).
-    expires = "86400" # 24 hours
+    # optional; time to live as a duration. default is use server default (7 days).
+    # Max duration supported by server is 1year.
+    expires = "1d"
 
     # optional username to publish as; default is anonymous author
     author = "my name"

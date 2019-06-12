@@ -68,9 +68,9 @@ url = "https://paste.fedoraproject.org/"
 # 'Untitled')
 title = "my paste"
 
-# optional; time to live in seconds. Default is set
+# optional; expires in X duration. Default is set
 # by the server (eg. fedora paste defaults to a week iirc)
-expires = "360" # default is expiry set by server
+expires = "10min"
 
 # optional; syntax highlighting to use. Default is plain text
 # (set by the server).
@@ -112,8 +112,8 @@ url = "https://onetimesecret.com/"
 # password protect the secret
 password = "password123"
 
-# set the time the secret is allowed to live in seconds
-expires = "86400" # 1 day of seconds
+# optional; time to live as a duration
+expires = "2days"
 
 # tell the server to email the secret link to this address. Note that
 # onetimesecret.com only allow this with authenticated uploads. (anonymous

@@ -1,4 +1,5 @@
 use std::fmt::{self, Display, Formatter};
+use std::time::Duration;
 
 use reqwest::multipart::Form;
 use reqwest::Client;
@@ -8,7 +9,10 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{override_if_present, override_option_with_option_none, serde_url};
+use crate::utils::{
+    override_if_present, override_option_duration_with_option_none,
+    override_option_with_option_none, serde_humantime, serde_url,
+};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -17,7 +21,8 @@ pub struct Backend {
     #[serde(with = "serde_url")]
     pub url: Url,
     pub password: Option<String>,
-    pub expires: Option<String>,
+    #[serde(with = "serde_humantime")]
+    pub expires: Option<Duration>,
     pub recipient: Option<String>,
     pub username: Option<String>,
     pub apikey: Option<String>,
@@ -57,8 +62,10 @@ Example config block:
     [servers.ots]
     backend = "onetimesecret"
     url = "https://onetimesecret.com/"
+
+    # optionals
     password = "password123"
-    expires = "86400" # 1 day of seconds
+    expires = "1day"
     recipient = "user@example.com"
     username = "myuser@example.com"
     apikey = "DEADBEEF"
@@ -68,11 +75,11 @@ impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_option_with_option_none(&mut self.expires, opt.expires);
         override_option_with_option_none(&mut self.password, opt.password);
         override_option_with_option_none(&mut self.recipient, opt.recipient);
         override_option_with_option_none(&mut self.username, opt.username);
         override_option_with_option_none(&mut self.apikey, opt.apikey);
+        override_option_duration_with_option_none(&mut self.expires, opt.expires)?;
         Ok(())
     }
 
@@ -84,10 +91,7 @@ impl PasteClient for Backend {
         };
         let form = match self.expires {
             None => form,
-            Some(ref text) => {
-                let expires: u64 = text.parse()?;
-                form.text("ttl", expires.to_string())
-            }
+            Some(duration) => form.text("ttl", duration.as_secs().to_string()),
         };
         let form = match self.recipient {
             None => form,
@@ -114,7 +118,10 @@ impl PasteClient for Backend {
         let data: String = request.send()?.text()?;
 
         let data: PasteResponse = match serde_json::from_str(&data) {
-            Ok(data) => data,
+            Ok(data) => {
+                dbg!(&data);
+                data
+            }
             Err(_) => {
                 return Err(format!("api response: {}", data).into());
             }

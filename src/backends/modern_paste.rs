@@ -1,5 +1,5 @@
 use std::fmt::{self, Display, Formatter};
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -8,7 +8,10 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{override_if_present, override_option_with_option_none, serde_url};
+use crate::utils::{
+    override_if_present, override_option_duration_with_option_none,
+    override_option_with_option_none, serde_humantime, serde_url,
+};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -17,7 +20,8 @@ pub struct Backend {
     #[serde(with = "serde_url")]
     pub url: Url,
     pub title: Option<String>,
-    pub expires: Option<String>,
+    #[serde(with = "serde_humantime")]
+    pub expires: Option<Duration>,
     pub syntax: Option<String>,
     pub password: Option<String>,
     pub apikey: Option<String>,
@@ -61,7 +65,7 @@ Example config block:
 
     # optionals
     title = "my paste" # default untitled
-    expires = "3600" # default is expiry set by server
+    expires = "3600s" # default is expiry set by server
     syntax = "python" # default plain text
     password = "password123" # default not password protected
     # default anonymous pastes
@@ -72,11 +76,11 @@ impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_option_with_option_none(&mut self.expires, opt.expires);
         override_option_with_option_none(&mut self.title, opt.title);
         override_option_with_option_none(&mut self.password, opt.password);
         override_option_with_option_none(&mut self.apikey, opt.apikey);
         override_option_with_option_none(&mut self.syntax, opt.syntax);
+        override_option_duration_with_option_none(&mut self.expires, opt.expires)?;
         Ok(())
     }
 
@@ -88,14 +92,13 @@ impl PasteClient for Backend {
             contents: data,
             expiry_time: match self.expires {
                 None => None,
-                Some(ref text) => {
+                Some(duration) => {
                     // api expects expiry as unix timestamp at which it expires
-                    let timestamp = SystemTime::now()
+                    let expires = SystemTime::now()
                         .duration_since(SystemTime::UNIX_EPOCH)
                         .expect("system time must be legit")
-                        .as_secs();
-                    let expiry_time = timestamp + text.parse::<u64>()?;
-                    Some(expiry_time)
+                        + duration;
+                    Some(expires.as_secs())
                 }
             },
             language: self.syntax.clone(),

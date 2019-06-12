@@ -25,7 +25,8 @@ These should be consistently named between backends and have the same semantics.
 * -t --title (NONE-able)
 * -e --expires (NONE-able, time to live in seconds, string == special server supported value)
 * -P --password (NONE-able, password to view a paste)
-* -r --recipient (NONE-able)
+* -r --recipient (NONE-able, for servers that can email link to a recipient
+  address)
 * -k --apikey (NONE-able, used for auth password or apikey/token)
 * -U --username (NONE-able, used for auth, semantically different to author)
 * -a --author (NONE-able, poster/uploader name)

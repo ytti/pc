@@ -1,4 +1,5 @@
 use std::fmt::{self, Display, Formatter};
+use std::time::Duration;
 
 use reqwest::multipart::Form;
 use reqwest::Client;
@@ -9,7 +10,8 @@ use url::Url;
 use crate::error::PasteResult;
 use crate::types::PasteClient;
 use crate::utils::{
-    deserialize_url, override_if_present, override_option_with_option_none, serialize_url,
+    deserialize_url, override_if_present, override_option_duration_with_option_none,
+    override_option_with_option_none, serde_humantime, serialize_url,
 };
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -20,7 +22,8 @@ pub struct Backend {
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
     pub syntax: Option<String>,
-    pub expires: Option<String>,
+    #[serde(with = "serde_humantime")]
+    pub expires: Option<Duration>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -53,9 +56,9 @@ Example config block:
     # optional; syntax highlighting / filetype (default is set by server)
     syntax = "python"
 
-    # optional; lifetime in seconds. Default server config also supports special values like
+    # optional; lifetime as a duration. Default server config also supports special values like
     # "onetime" and "never".
-    expires = "2592000"
+    expires = "3600s"
 "#;
 
 impl PasteClient for Backend {
@@ -63,13 +66,17 @@ impl PasteClient for Backend {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
         override_option_with_option_none(&mut self.syntax, opt.syntax);
-        override_option_with_option_none(&mut self.expires, opt.expires);
+        override_option_duration_with_option_none(&mut self.expires, opt.expires).map_err(|x| {
+            clap::Error {
+                message: format!("DurationError: {}", x),
+                kind: clap::ErrorKind::InvalidValue,
+                info: None,
+            }
+        })?;
         Ok(())
     }
 
     fn paste(&self, data: String) -> PasteResult<Url> {
-        dbg!(&self);
-        // http://dpaste.com/api/v2/
         let mut api_endpoint: Url = self.url.clone();
         api_endpoint.set_path("/api/");
 
@@ -79,7 +86,7 @@ impl PasteClient for Backend {
             None => form,
         };
         let form = match self.expires {
-            Some(ref expires) => form.text("expires", expires.to_owned()),
+            Some(ref expires) => form.text("expires", expires.as_secs().to_string()),
             None => form,
         };
 

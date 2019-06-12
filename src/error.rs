@@ -7,6 +7,7 @@ pub enum PasteError {
     Url(url::ParseError),
     IO(std::io::Error),
     ParseInt(std::num::ParseIntError),
+    ParseDuration(humantime::DurationError),
     Message(String),
 }
 
@@ -42,6 +43,12 @@ impl From<std::num::ParseIntError> for PasteError {
     }
 }
 
+impl From<humantime::DurationError> for PasteError {
+    fn from(err: humantime::DurationError) -> Self {
+        PasteError::ParseDuration(err)
+    }
+}
+
 impl Display for PasteError {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(
@@ -52,6 +59,7 @@ impl Display for PasteError {
                 PasteError::Url(err) => format!("Url error: {}", err),
                 PasteError::IO(err) => format!("IO error: {}", err),
                 PasteError::ParseInt(err) => format!("ParseInt error: {}", err),
+                PasteError::ParseDuration(err) => format!("ParseDuration error: {}", err),
                 PasteError::Message(err) => format!("other error: {}", err),
             }
         )
@@ -65,6 +73,7 @@ impl Error for PasteError {
             PasteError::Url(err) => Some(err),
             PasteError::IO(err) => Some(err),
             PasteError::ParseInt(err) => Some(err),
+            PasteError::ParseDuration(err) => Some(err),
             PasteError::Message(_) => None,
         }
     }

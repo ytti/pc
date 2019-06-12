@@ -30,6 +30,10 @@ histfile = "/tmp/paste_history.txt"
 # example file as a reference, or see the output of `pc show-backend
 # <backendname>`.
 
+# Where a duration value is required, it should be formatted according to
+# <https://docs.rs/humantime/1.2.0/humantime/fn.parse_duration.html>.
+# Basically, values like "1month 2d 3h 30m 30s" or "5m" or "300s".
+
 [servers.vpaste]
 # supports any servers running http://pileus.org/tools/vpaste
 backend = "vpaste"
@@ -147,6 +151,6 @@ url = "https://dpaste.de/"
 # optional; syntax highlighting filetype (default is set by server)
 syntax = "c"
 
-# optional; lifetime in seconds. Default server config also supports special
+# optional; lifetime as a duration. Default server config also supports special
 # values like "onetime" and "never".
-expires = "3600"
+expires = "3600s"

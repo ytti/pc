@@ -19,12 +19,11 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
-    pub passphrase: Option<String>,
-    #[serde(default)]
-    pub ttl: u64,
+    pub password: Option<String>,
+    pub expires: Option<String>,
     pub recipient: Option<String>,
     pub username: Option<String>,
-    pub api_key: Option<String>,
+    pub apikey: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -35,20 +34,20 @@ struct Opt {
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
     /// password protect - default is no password ("NONE" = disable password)
-    #[structopt(short = "p", long = "passphrase")]
-    pub passphrase: Option<String>,
-    /// time to live in seconds - default is set by the server ("0" = force use server default)
-    #[structopt(short = "t", long = "ttl")]
-    pub ttl: Option<u64>,
+    #[structopt(short = "P", long = "password")]
+    pub password: Option<String>,
+    /// time to live in seconds - default is set by the server (NONE = force use server default)
+    #[structopt(short = "e", long = "expires")]
+    pub expires: Option<String>,
     /// email that the server should notify with the link; default is no email ("NONE" = disable this)
     #[structopt(short = "r", long = "recipient")]
     pub recipient: Option<String>,
     /// username for authenticated uploads ("NONE" = disable this)
-    #[structopt(short = "n", long = "username")]
+    #[structopt(short = "U", long = "username")]
     pub username: Option<String>,
     /// api key for authenticated uploads ("NONE" = disable this)
-    #[structopt(short = "k", long = "api-key")]
-    pub api_key: Option<String>,
+    #[structopt(short = "k", long = "apikey")]
+    pub apikey: Option<String>,
 }
 
 pub const NAME: &str = "onetimesecret";
@@ -61,34 +60,37 @@ Example config block:
     [servers.ots]
     backend = "onetimesecret"
     url = "https://onetimesecret.com/"
-    passphrase = "password123"
-    ttl = 86400 # 1 day of seconds
+    password = "password123"
+    expires = "86400" # 1 day of seconds
     recipient = "user@example.com"
     username = "myuser@example.com"
-    api_key = "DEADBEEF"
+    apikey = "DEADBEEF"
 "#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_if_present(&mut self.ttl, opt.ttl);
-        override_option_with_option_none(&mut self.passphrase, opt.passphrase);
+        override_option_with_option_none(&mut self.expires, opt.expires);
+        override_option_with_option_none(&mut self.password, opt.password);
         override_option_with_option_none(&mut self.recipient, opt.recipient);
         override_option_with_option_none(&mut self.username, opt.username);
-        override_option_with_option_none(&mut self.api_key, opt.api_key);
+        override_option_with_option_none(&mut self.apikey, opt.apikey);
         Ok(())
     }
 
     fn paste(&self, data: String) -> PasteResult<Url> {
         let form = Form::new().text("secret", data);
-        let form = match self.passphrase {
-            Some(ref passphrase) => form.text("passphrase", passphrase.to_owned()),
+        let form = match self.password {
+            Some(ref password) => form.text("passphrase", password.to_owned()),
             None => form,
         };
-        let form = match self.ttl {
-            0 => form,
-            ttl => form.text("ttl", ttl.to_string()),
+        let form = match self.expires {
+            None => form,
+            Some(ref text) => {
+                let expires: u64 = text.parse()?;
+                form.text("ttl", expires.to_string())
+            }
         };
         let form = match self.recipient {
             None => form,
@@ -100,12 +102,12 @@ impl PasteClient for Backend {
 
         let request = Client::new().post(api_endpoint).multipart(form);
 
-        let request = match (&self.username, &self.api_key) {
+        let request = match (&self.username, &self.apikey) {
             (None, None) => request,
-            (Some(ref username), Some(ref api_key)) => request.basic_auth(username, Some(api_key)),
+            (Some(ref username), Some(ref apikey)) => request.basic_auth(username, Some(apikey)),
             (_, _) => {
                 return Err(
-                    "Either both username and api_key must be provided, or neither."
+                    "Either both username and apikey must be provided, or neither."
                         .to_owned()
                         .into(),
                 );

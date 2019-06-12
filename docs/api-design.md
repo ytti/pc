@@ -15,7 +15,7 @@ This document aims to be a reference and scratchpad for API design notes.
 
 ### List of args
 
-These should be consistently named between backends.
+These should be consistently named between backends and have the same semantics.
 
 * -u --url
 * -d --domain
@@ -25,7 +25,7 @@ These should be consistently named between backends.
 * -t --title (NONE-able)
 * -e --expires (NONE-able, time to live in seconds, string == special server supported value)
 * -P --password (NONE-able, password to view a paste)
-* -E --email (NONE-able)
+* -r --recipient (NONE-able)
 * -k --apikey (NONE-able, used for auth password or apikey/token)
-* -U --username (NONE-able)
+* -U --username (NONE-able, used for auth, semantically different to author)
 * -a --author (NONE-able, poster/uploader name)

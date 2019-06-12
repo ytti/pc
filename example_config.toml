@@ -105,10 +105,10 @@ url = "https://onetimesecret.com/"
 # Optional options.
 
 # password protect the secret
-passphrase = "password123"
+password = "password123"
 
 # set the time the secret is allowed to live in seconds
-ttl = 86400 # 1 day of seconds
+expires = "86400" # 1 day of seconds
 
 # tell the server to email the secret link to this address. Note that
 # onetimesecret.com only allow this with authenticated uploads. (anonymous
@@ -120,18 +120,18 @@ recipient = "user@example.com"
 # neither. It is ok to provide them in stages - eg. username in the config file
 # and api_token on the command line.
 username = "myuser@example.com"
-api_key = "DEADBEEF"
+apikey = "DEADBEEF"
 
 
 [servers.sprunge]
 backend = "sprunge"
 url = "http://sprunge.us/"
 
-# optional; default is raw/plaintext. If language provided, the text is shown
+# optional; default is raw/plaintext. If syntax provided, the text is shown
 # with line numbers and has pygments based html syntax highlighting. Note that
 # this is a client-side option that takes effect by adding a query paramater to
 # the resulting paste url.
-language = "py"
+syntax = "py"
 
 
 [servers.pip]

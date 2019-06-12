@@ -59,6 +59,6 @@ impl PasteClient for Backend {
 
 impl Display for Backend {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "generic | {}", self.url)
+        write!(f, "paste_rs | {}", self.url)
     }
 }

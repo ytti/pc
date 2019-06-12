@@ -19,7 +19,7 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
-    pub language: Option<String>,
+    pub syntax: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -30,9 +30,9 @@ pub struct Opt {
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 
-    /// Optional language for syntax highlighting (default plain text; NONE = force default)
-    #[structopt(short = "l", long = "language")]
-    language: Option<String>,
+    /// Optional syntax highlighting (NONE = force default)
+    #[structopt(short = "s", long = "syntax")]
+    syntax: Option<String>,
 }
 
 pub const NAME: &str = "sprunge";
@@ -45,14 +45,14 @@ Example config block:
     [servers.sprunge]
     backend = "sprunge"
     url = "http://sprunge.us/"
-    language = "py"
+    syntax = "py"
 "#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_option_with_option_none(&mut self.language, opt.language);
+        override_option_with_option_none(&mut self.syntax, opt.syntax);
         Ok(())
     }
 
@@ -64,7 +64,7 @@ impl PasteClient for Backend {
             .send()?
             .text()?;
         let mut url = Url::parse(&text)?;
-        if let Some(ref lang) = self.language {
+        if let Some(ref lang) = self.syntax {
             url.set_query(Some(lang));
         }
         Ok(url)

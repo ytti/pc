@@ -179,7 +179,10 @@ binary and used as the default config if no config file found.
 
 \*: open source; possible to self-host or find alternate public servers.
 
-See the [wiki page](https://github.com/swalladge/pc/wiki/server-list) for a list of public server instances supported.
+See the [server list](docs/server-list.md) for a list of public server instances supported.
+
+See also the [feature matrix page](docs/feature-matrix.md) for which features
+each backend supports.
 
 
 ## Development

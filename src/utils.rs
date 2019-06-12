@@ -63,14 +63,6 @@ pub fn override_option_with_option_none(old: &mut Option<String>, new: Option<St
     }
 }
 
-/// when the current value is an optional value and needs to be overridden if a new value is
-/// present
-pub fn override_option_if_present<T>(old: &mut Option<T>, new: Option<T>) {
-    if new.is_some() {
-        *old = new;
-    }
-}
-
 /// when the current value is a concrete value and needs to be overridden if a new value is
 /// present
 pub fn override_if_present<T>(old: &mut T, new: Option<T>) {

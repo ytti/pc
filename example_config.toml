@@ -64,25 +64,38 @@ url = "https://paste.fedoraproject.org/"
 # 'Untitled')
 title = "my paste"
 
-# optional; unix timestamp at which the paste url should expire. Default is set
+# optional; time to live in seconds. Default is set
 # by the server (eg. fedora paste defaults to a week iirc)
-expiry_time = 1559817269 # default is expiry set by server
+expires = "360" # default is expiry set by server
 
-# optional; filetype/syntax/language highlighting to use. Default is plain text
+# optional; syntax highlighting to use. Default is plain text
 # (set by the server).
-language = "python"
+syntax = "python"
 
 # password protect the paste url. Optional - default is not password protected.
 password = "password123"
 
 # optional api key to authenticate paste upload requests. Default is submit as
 # anonymous.
-api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+apikey = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
 
 
 [servers.dpastecom]
 backend = "dpaste_com"
 url = "http://dpaste.com/"
+
+# optional; default is plain text
+# see <http://dpaste.com/api/v2/syntax-choices/> for list of supported names
+syntax = "js"
+
+# optional; default is use server default (7 days). must be in inclusive range 0 - 31536000 (1 year).
+expires = "86400" # 24 hours
+
+# optional username to publish as; default is anonymous author
+author = "my name"
+
+# optional; default is no title
+title = "my paste"
 
 [servers.ots]
 # supports any servers running https://github.com/onetimesecret/onetimesecret
@@ -131,8 +144,8 @@ url = "http://p.ip.fi/"
 backend = "dpaste"
 url = "https://dpaste.de/"
 
-# optional; syntax highlighting / filetype (default is set by server)
-lexer = "c"
+# optional; syntax highlighting filetype (default is set by server)
+syntax = "c"
 
 # optional; lifetime in seconds. Default server config also supports special
 # values like "onetime" and "never".

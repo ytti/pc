@@ -1,4 +1,5 @@
 use std::fmt::{self, Display, Formatter};
+use std::time::SystemTime;
 
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -8,8 +9,7 @@ use url::Url;
 use crate::error::PasteResult;
 use crate::types::PasteClient;
 use crate::utils::{
-    deserialize_url, override_if_present, override_option_if_present,
-    override_option_with_option_none, serialize_url,
+    deserialize_url, override_if_present, override_option_with_option_none, serialize_url,
 };
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -20,12 +20,10 @@ pub struct Backend {
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
     pub title: Option<String>,
-    /// unix timestamp at which the paste should expire
-    #[serde(default)]
-    pub expiry_time: u64,
-    pub language: Option<String>,
+    pub expires: Option<String>,
+    pub syntax: Option<String>,
     pub password: Option<String>,
-    pub api_key: Option<String>,
+    pub apikey: Option<String>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -38,18 +36,18 @@ pub struct Opt {
     /// Url
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-    /// unix timestamp at which the paste should expire (0 = use server default expiry)
-    #[structopt(short = "e", long = "expiry-time")]
-    pub expiry_time: Option<u64>,
+    /// time to live in seconds
+    #[structopt(short = "e", long = "expires")]
+    pub expires: Option<String>,
     /// language/filetype/syntax
-    #[structopt(short = "l", long = "language")]
-    pub language: Option<String>,
+    #[structopt(short = "s", long = "syntax")]
+    pub syntax: Option<String>,
     /// protect paste access with this password (NONE = no password)
-    #[structopt(short = "p", long = "password")]
+    #[structopt(short = "P", long = "password")]
     pub password: Option<String>,
     /// upload paste as authenticated user (NONE = force anon)
-    #[structopt(short = "k", long = "api-key")]
-    pub api_key: Option<String>,
+    #[structopt(short = "k", long = "apikey")]
+    pub apikey: Option<String>,
 }
 
 pub const NAME: &str = "modern_paste";
@@ -66,22 +64,22 @@ Example config block:
 
     # optionals
     title = "my paste" # default untitled
-    expiry_time = 1559817269 # default is expiry set by server
-    language = "python" # default plain text
+    expires = "3600" # default is expiry set by server
+    syntax = "python" # default plain text
     password = "password123" # default not password protected
     # default anonymous pastes
-    api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+    apikey = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
 "#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_if_present(&mut self.expiry_time, opt.expiry_time);
+        override_option_with_option_none(&mut self.expires, opt.expires);
         override_option_with_option_none(&mut self.title, opt.title);
         override_option_with_option_none(&mut self.password, opt.password);
-        override_option_with_option_none(&mut self.api_key, opt.api_key);
-        override_option_if_present(&mut self.language, opt.language);
+        override_option_with_option_none(&mut self.apikey, opt.apikey);
+        override_option_with_option_none(&mut self.syntax, opt.syntax);
         Ok(())
     }
 
@@ -89,13 +87,21 @@ impl PasteClient for Backend {
         let client = Client::new();
 
         let params = PasteParams {
-            api_key: self.api_key.clone(),
+            api_key: self.apikey.clone(),
             contents: data,
-            expiry_time: match self.expiry_time {
-                0 => None,
-                e => Some(e),
+            expiry_time: match self.expires {
+                None => None,
+                Some(ref text) => {
+                    // api expects expiry as unix timestamp at which it expires
+                    let timestamp = SystemTime::now()
+                        .duration_since(SystemTime::UNIX_EPOCH)
+                        .expect("system time must be legit")
+                        .as_secs();
+                    let expiry_time = timestamp + text.parse::<u64>()?;
+                    Some(expiry_time)
+                }
             },
-            language: self.language.clone(),
+            language: self.syntax.clone(),
             password: self.password.clone(),
             title: self.title.clone(),
         };
@@ -105,7 +111,7 @@ impl PasteClient for Backend {
         let data: PasteResponse = client.post(api_endpoint).json(&params).send()?.json()?;
 
         if let Some(false) = data.success {
-            return Err(format!("api returned failure: false {:?}", data.failure_name).into());
+            return Err(format!("api returned failure: {:?}", data.message).into());
         }
 
         match data.url {

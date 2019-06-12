@@ -19,7 +19,7 @@ pub struct Backend {
     #[serde(deserialize_with = "deserialize_url")]
     #[serde(serialize_with = "serialize_url")]
     pub url: Url,
-    pub lexer: Option<String>,
+    pub syntax: Option<String>,
     pub expires: Option<String>,
 }
 
@@ -31,8 +31,8 @@ pub struct Opt {
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
     /// syntax/filetype - set to NONE to use default, overriding any set in config file
-    #[structopt(short = "l", long = "lexer")]
-    lexer: Option<String>,
+    #[structopt(short = "s", long = "syntax")]
+    syntax: Option<String>,
     /// lifetime of paste in seconds. See server config for extra supported values (eg. onetime,
     /// never). Set to NONE to disable.
     #[structopt(short = "e", long = "expires")]
@@ -51,7 +51,7 @@ Example config block:
     url = "https://dpaste.de/"
 
     # optional; syntax highlighting / filetype (default is set by server)
-    lexer = "python"
+    syntax = "python"
 
     # optional; lifetime in seconds. Default server config also supports special values like
     # "onetime" and "never".
@@ -62,7 +62,7 @@ impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
-        override_option_with_option_none(&mut self.lexer, opt.lexer);
+        override_option_with_option_none(&mut self.syntax, opt.syntax);
         override_option_with_option_none(&mut self.expires, opt.expires);
         Ok(())
     }
@@ -74,8 +74,8 @@ impl PasteClient for Backend {
         api_endpoint.set_path("/api/");
 
         let form = Form::new().text("content", data).text("format", "url");
-        let form = match self.lexer {
-            Some(ref lexer) => form.text("lexer", lexer.to_owned()),
+        let form = match self.syntax {
+            Some(ref syntax) => form.text("lexer", syntax.to_owned()),
             None => form,
         };
         let form = match self.expires {

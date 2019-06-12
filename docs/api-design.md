@@ -1,0 +1,31 @@
+
+
+# API Design
+
+This document aims to be a reference and scratchpad for API design notes.
+
+
+## cli args standards
+
+### Notes
+
+- for optional args that are also optional in the config file, setting it to
+  NONE on the cli will override any set in the config file so will be the
+  default as if none set.
+
+### List of args
+
+These should be consistently named between backends.
+
+* -u --url
+* -d --domain
+* -p --port
+* -s --syntax (NONE-able, passed directly to api so some backends might be
+  different (eg. py instead of python))
+* -t --title (NONE-able)
+* -e --expires (NONE-able, time to live in seconds, string == special server supported value)
+* -P --password (NONE-able, password to view a paste)
+* -E --email (NONE-able)
+* -k --apikey (NONE-able, used for auth password or apikey/token)
+* -U --username (NONE-able)
+* -a --author (NONE-able, poster/uploader name)

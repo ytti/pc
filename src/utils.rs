@@ -73,12 +73,18 @@ pub fn override_option_with_option_none(old: &mut Option<String>, new: Option<St
 pub fn override_option_duration_with_option_none(
     old: &mut Option<Duration>,
     new: Option<String>,
-) -> Result<(), humantime::DurationError> {
+) -> Result<(), clap::Error> {
     if let Some(new) = new {
         if new == "NONE" {
             *old = None;
         } else {
-            *old = Some(humantime::parse_duration(new.as_str())?);
+            *old = Some(
+                humantime::parse_duration(new.as_str()).map_err(|x| clap::Error {
+                    message: format!("DurationError: {}", x),
+                    kind: clap::ErrorKind::InvalidValue,
+                    info: None,
+                })?,
+            )
         }
     }
     Ok(())

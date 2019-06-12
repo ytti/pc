@@ -1,4 +1,5 @@
 use std::fmt::{self, Display, Formatter};
+use std::time::Duration;
 
 use reqwest::multipart::Form;
 use reqwest::Client;
@@ -8,7 +9,10 @@ use url::Url;
 
 use crate::error::PasteResult;
 use crate::types::PasteClient;
-use crate::utils::{override_if_present, override_option_with_option_none, serde_url};
+use crate::utils::{
+    override_if_present, override_option_duration_with_option_none,
+    override_option_with_option_none, serde_humantime, serde_url,
+};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -19,7 +23,8 @@ pub struct Backend {
     pub syntax: Option<String>,
     pub author: Option<String>,
     pub title: Option<String>,
-    pub expires: Option<String>,
+    #[serde(with = "serde_humantime")]
+    pub expires: Option<Duration>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -74,7 +79,7 @@ impl PasteClient for Backend {
         override_option_with_option_none(&mut self.syntax, opt.syntax);
         override_option_with_option_none(&mut self.author, opt.author);
         override_option_with_option_none(&mut self.title, opt.title);
-        override_option_with_option_none(&mut self.expires, opt.expires);
+        override_option_duration_with_option_none(&mut self.expires, opt.expires)?;
         Ok(())
     }
 
@@ -98,9 +103,9 @@ impl PasteClient for Backend {
         };
         let form = match self.expires {
             None => form,
-            Some(ref text) => {
+            Some(ref duration) => {
                 // the api expects an expiry in days
-                let expiry_days: u64 = text.parse::<u64>()? / 60 / 60 / 24;
+                let expiry_days: u64 = duration.as_secs() / 60 / 60 / 24;
                 form.text("expiry_days", expiry_days.to_string())
             }
         };

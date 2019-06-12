@@ -65,13 +65,7 @@ impl PasteClient for Backend {
         let opt = Opt::from_iter_safe(args)?;
         override_if_present(&mut self.url, opt.url);
         override_option_with_option_none(&mut self.syntax, opt.syntax);
-        override_option_duration_with_option_none(&mut self.expires, opt.expires).map_err(|x| {
-            clap::Error {
-                message: format!("DurationError: {}", x),
-                kind: clap::ErrorKind::InvalidValue,
-                info: None,
-            }
-        })?;
+        override_option_duration_with_option_none(&mut self.expires, opt.expires)?;
         Ok(())
     }
 

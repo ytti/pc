@@ -10,16 +10,15 @@ use url::Url;
 use crate::error::PasteResult;
 use crate::types::PasteClient;
 use crate::utils::{
-    deserialize_url, override_if_present, override_option_duration_with_option_none,
-    override_option_with_option_none, serde_humantime, serialize_url,
+    override_if_present, override_option_duration_with_option_none,
+    override_option_with_option_none, serde_humantime, serde_url,
 };
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "snake_case")]
 pub struct Backend {
-    #[serde(deserialize_with = "deserialize_url")]
-    #[serde(serialize_with = "serialize_url")]
+    #[serde(with = "serde_url")]
     pub url: Url,
     pub syntax: Option<String>,
     #[serde(with = "serde_humantime")]

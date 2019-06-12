@@ -3,30 +3,34 @@ use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::time::Duration;
 
-use serde::Deserialize;
-use serde::{Deserializer, Serializer};
 use url::Url;
 
-pub fn deserialize_url<'de, D>(d: D) -> Result<Url, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s = String::deserialize(d)?;
+pub mod serde_url {
+    use serde::Deserialize;
+    use serde::{Deserializer, Serializer};
+    use url::Url;
 
-    match Url::parse(&s) {
-        Ok(u) => Ok(u),
-        Err(_) => Err(serde::de::Error::custom(format!(
-            "Could not parse {:?} as a url",
-            s
-        ))),
+    pub fn deserialize<'de, D>(d: D) -> Result<Url, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(d)?;
+
+        match Url::parse(&s) {
+            Ok(u) => Ok(u),
+            Err(_) => Err(serde::de::Error::custom(format!(
+                "Could not parse {:?} as a url",
+                s
+            ))),
+        }
     }
-}
 
-pub fn serialize_url<S>(x: &Url, serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    serializer.serialize_str(x.as_str())
+    pub fn serialize<S>(x: &Url, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(x.as_str())
+    }
 }
 
 pub fn read_file(fname: &str) -> io::Result<String> {

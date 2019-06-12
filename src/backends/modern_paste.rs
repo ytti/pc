@@ -52,9 +52,9 @@ pub struct Opt {
     pub api_key: Option<String>,
 }
 
-pub const NAME: &'static str = "modern_paste";
+pub const NAME: &str = "modern_paste";
 
-pub const INFO: &'static str = r#"Modern Paste backend.
+pub const INFO: &str = r#"Modern Paste backend.
 modern-paste source: <https://github.com/LINKIWI/modern-paste/>.
 Example popular instance of this is <https://paste.fedoraproject.org/>.
 
@@ -91,7 +91,7 @@ impl PasteClient for Backend {
         let params = PasteParams {
             api_key: self.api_key.clone(),
             contents: data,
-            expiry_time: match self.expiry_time.clone() {
+            expiry_time: match self.expiry_time {
                 0 => None,
                 e => Some(e),
             },

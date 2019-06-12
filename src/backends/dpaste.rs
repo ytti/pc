@@ -39,9 +39,9 @@ pub struct Opt {
     expires: Option<String>,
 }
 
-pub const NAME: &'static str = "dpaste";
+pub const NAME: &str = "dpaste";
 
-pub const INFO: &'static str =
+pub const INFO: &str =
     r#"Dpaste backend. Supports any server running <https://github.com/bartTC/dpaste>.
 
 Example config block:

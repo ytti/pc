@@ -35,9 +35,9 @@ pub struct Opt {
     language: Option<String>,
 }
 
-pub const NAME: &'static str = "sprunge";
+pub const NAME: &str = "sprunge";
 
-pub const INFO: &'static str =
+pub const INFO: &str =
     r#"Sprunge backend. Supports any servers running sprunge <https://github.com/rupa/sprunge>.
 
 Example config block:

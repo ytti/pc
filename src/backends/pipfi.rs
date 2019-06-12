@@ -28,9 +28,9 @@ pub struct Opt {
     url: Option<Url>,
 }
 
-pub const NAME: &'static str = "pipfi";
+pub const NAME: &str = "pipfi";
 
-pub const INFO: &'static str = r#"Pipfi backend. Supports <http://p.ip.fi/>.
+pub const INFO: &str = r#"Pipfi backend. Supports <http://p.ip.fi/>.
 
 Example config block:
 

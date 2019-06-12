@@ -66,12 +66,10 @@ pub fn choose_config_file(
             // file override, use if exists, else err
             if s == "NONE" {
                 Ok(None)
+            } else if Path::new(s).exists() {
+                Ok(Some(s.to_owned()))
             } else {
-                if Path::new(s).exists() {
-                    Ok(Some(s.to_owned()))
-                } else {
-                    Err(format!("config file not found: {:?}", s).into())
-                }
+                Err(format!("config file not found: {:?}", s).into())
             }
         }
         None => {

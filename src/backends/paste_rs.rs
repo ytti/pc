@@ -27,9 +27,9 @@ struct Opt {
     url: Option<Url>,
 }
 
-pub const NAME: &'static str = "paste_rs";
+pub const NAME: &str = "paste_rs";
 
-pub const INFO: &'static str =
+pub const INFO: &str =
     r#"paste.rs paste service backend. Supports https://paste.rs/ and any other pastebin services
 with the following two properties:
 

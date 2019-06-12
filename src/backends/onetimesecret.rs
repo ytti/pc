@@ -51,9 +51,9 @@ struct Opt {
     pub api_key: Option<String>,
 }
 
-pub const NAME: &'static str = "onetimesecret";
+pub const NAME: &str = "onetimesecret";
 
-pub const INFO: &'static str =
+pub const INFO: &str =
     r#"Paste backend to send text to onetimesecret servers <https://github.com/onetimesecret/onetimesecret>.
 
 Example config block:

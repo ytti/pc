@@ -28,10 +28,9 @@ pub struct Opt {
     url: Option<Url>,
 }
 
-pub const NAME: &'static str = "vpaste";
+pub const NAME: &str = "vpaste";
 
-pub const INFO: &'static str =
-    r#"Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.
+pub const INFO: &str = r#"Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.
 
 Example config block:
 

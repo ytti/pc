@@ -47,9 +47,9 @@ pub struct Opt {
     expiry_days: Option<u16>,
 }
 
-pub const NAME: &'static str = "dpaste_com";
+pub const NAME: &str = "dpaste_com";
 
-pub const INFO: &'static str = r#"Dpaste.com backend. Supports <http://dpaste.com/>.
+pub const INFO: &str = r#"Dpaste.com backend. Supports <http://dpaste.com/>.
 
 Example config block:
 

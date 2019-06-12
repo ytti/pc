@@ -47,7 +47,7 @@ pub fn read_stdin() -> io::Result<String> {
 
 pub fn write_hist(paste_url: Url, path: &str) -> Result<(), Box<dyn Error>> {
     let mut file = OpenOptions::new().append(true).create(true).open(path)?;
-    file.write(format!("{}\n", paste_url).as_bytes())?;
+    file.write_all(format!("{}\n", paste_url).as_bytes())?;
     Ok(())
 }
 

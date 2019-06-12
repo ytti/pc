@@ -27,9 +27,9 @@ pub struct Opt {
     url: Option<Url>,
 }
 
-pub const NAME: &'static str = "haste";
+pub const NAME: &str = "haste";
 
-pub const INFO: &'static str = r#"Hastebin backend. Supports any servers running Haste
+pub const INFO: &str = r#"Hastebin backend. Supports any servers running Haste
 <https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
 <https://hastebin.com/>.
 

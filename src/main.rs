@@ -66,22 +66,16 @@ To use this, add a server block under the heading [servers.{0}] in the config to
 
     let mut backend = backend_config.clone().extract_backend();
 
-    match backend.apply_args(server_args) {
-        Err(e) => {
-            match e.kind {
-                clap::ErrorKind::HelpDisplayed => {
-                    eprintln!(
-                        "[servers.{}]\n{}---\n",
-                        server_choice,
-                        toml::to_string(&backend_config).expect("must be valid")
-                    );
-                }
-                _ => {}
-            }
-            e.exit();
+    if let Err(e) = backend.apply_args(server_args) {
+        if let clap::ErrorKind::HelpDisplayed = e.kind {
+            eprintln!(
+                "[servers.{}]\n{}---\n",
+                server_choice,
+                toml::to_string(&backend_config).expect("must be valid")
+            );
         }
-        Ok(_) => {}
-    };
+        e.exit();
+    }
 
     let data = read_stdin()?;
     let paste_url = backend.paste(data)?;
@@ -204,7 +198,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                     "{0} => {1}{2}",
                     key,
                     backend_config.extract_backend(),
-                    if &config.main.server == &Some(key.to_owned()) {
+                    if config.main.server == Some(key.to_owned()) {
                         " [default]"
                     } else {
                         ""

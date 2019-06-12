@@ -32,13 +32,13 @@ pub struct Opt {
     port: Option<u16>,
 }
 
-pub const NAME: &'static str = "fiche";
+pub const NAME: &str = "fiche";
 
 pub fn default_port() -> u16 {
     9999
 }
 
-pub const INFO: &'static str =
+pub const INFO: &str =
     r#"Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
 termbin.com)
 
@@ -61,7 +61,7 @@ impl PasteClient for Backend {
     fn paste(&self, data: String) -> PasteResult<Url> {
         let mut stream = TcpStream::connect(format!("{}:{}", self.domain, self.port))?;
 
-        stream.write(data.as_bytes())?;
+        stream.write_all(data.as_bytes())?;
 
         let mut response = String::new();
         stream.read_to_string(&mut response)?;

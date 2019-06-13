@@ -58,10 +58,10 @@ $ pc fedora --help
 backend = "modern_paste"
 url = "https://paste.fedoraproject.org/"
 title = "my paste"
-expiry_time = 1559817269
-language = "python"
+expires = "10m"
+syntax = "python"
 password = "password123"
-api_key = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
+apikey = "BbK1F09sZZXL2335iqDGvGeQswQUcvUmzxMoWjp3yvZDxpWwRiP4YQL6PiUA8gy2"
 ---
 
 modern_paste backend
@@ -74,12 +74,12 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -k, --api-key <api_key>            upload paste as authenticated user (NONE = force anon)
-    -e, --expiry-time <expiry_time>    unix timestamp at which the paste should expire (0 = use server default expiry)
-    -l, --language <language>          language/filetype/syntax
-    -p, --password <password>          protect paste access with this password (NONE = no password)
-    -t, --title <title>                Title for the paste (NONE = untitled)
-    -u, --url <url>                    Url
+    -k, --apikey <apikey|NONE>        Upload paste as authenticated user
+    -e, --expires <duration|NONE>     Time to live as a duration
+    -P, --password <password|NONE>    Protects paste access with a password
+    -s, --syntax <filetype|NONE>      Filetype for syntax highlighting
+    -t, --title <title|NONE>          Title for the paste
+    -u, --url <url>                   Overrides url set in config
 ```
 
 Show a concise list of configured servers available to use:
@@ -106,16 +106,21 @@ Show info and configuration help for a particular backend:
 
 ```
 $ pc show-backend fiche
-Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
-termbin.com)
+Fiche backend.
+Supports any servers running fiche <https://github.com/solusipse/fiche>.
+(for example: termbin.com)
 
 Example config block:
 
     [servers.termbin]
     backend = "fiche"
     url = "termbin.com"
+
+    # Optional values
+
     # default port if missing is 9999
     port = 9999
+
 ```
 
 Dump the current config as interpreted. Helpful for debugging.
@@ -130,11 +135,10 @@ setup (although the [example config](./example_config.toml) with comments may
 be more helpful).
 
 ```
-$ pc -c NONE dump-config > ~/.config/pc/config.toml
-<default config as toml>
+$ mkdir -p ~/.config/pc/ && pc -c NONE dump-config > ~/.config/pc/config.toml
 ```
 
-Histfile feature can also be disabled/enabled on the cli:
+Histfile feature can also be disabled temporarily with args:
 
 ```
 $ echo "hi" | pc --histfile NONE
@@ -190,7 +194,7 @@ each backend supports.
 Standard cargo project. `cargo build`, `cargo run`, et al.
 
 There is a Makefile for some other common tasks. Eg. `make fmt` will run
-rustfmt on all source files.
+rustfmt on all source files. `make test` will run some basic tests.
 
 
 ## Related projects

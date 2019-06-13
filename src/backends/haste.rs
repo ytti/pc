@@ -21,22 +21,23 @@ pub struct Backend {
 #[structopt(about = "haste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 }
 
 pub const NAME: &str = "haste";
 
-pub const INFO: &str = r#"Hastebin backend. Supports any servers running Haste
-<https://github.com/seejohnrun/haste-server>. Official publicly available server for this is
-<https://hastebin.com/>.
+pub const INFO: &str = r#"Haste backend.
+Supports any servers running Haste <https://github.com/seejohnrun/haste-server>.
+Official publicly available server for this is <https://hastebin.com/>.
 
 Example config block:
 
     [servers.hastebin]
     backend = "haste"
-    url = "https://hastebin.com/""#;
+    url = "https://hastebin.com/"
+"#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {

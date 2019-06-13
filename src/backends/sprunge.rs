@@ -23,25 +23,30 @@ pub struct Backend {
 #[structopt(about = "sprunge backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 
-    /// Optional syntax highlighting (NONE = force default)
-    #[structopt(short = "s", long = "syntax")]
+    /// Filetype for syntax highlighting
+    #[structopt(short = "s", long = "syntax", value_name = "filetype|NONE")]
     syntax: Option<String>,
 }
 
 pub const NAME: &str = "sprunge";
 
-pub const INFO: &str =
-    r#"Sprunge backend. Supports any servers running sprunge <https://github.com/rupa/sprunge>.
+pub const INFO: &str = r#"Sprunge backend.
+Supports any servers running sprunge <https://github.com/rupa/sprunge>.
 
 Example config block:
 
     [servers.sprunge]
     backend = "sprunge"
     url = "http://sprunge.us/"
+
+    # Optional values
+
+    # Filetype for syntax highlighting. Default is plain text. A custom syntax set also marks up
+    # the content with html - not suitable for curl'ing as raw text.
     syntax = "py"
 "#;
 

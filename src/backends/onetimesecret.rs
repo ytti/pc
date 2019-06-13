@@ -33,30 +33,30 @@ pub struct Backend {
 #[structopt(about = "onetimesecret backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-    /// password protect - default is no password ("NONE" = disable password)
-    #[structopt(short = "P", long = "password")]
+    /// Password protects the secret
+    #[structopt(short = "P", long = "password", value_name = "password|NONE")]
     pub password: Option<String>,
-    /// time to live in seconds - default is set by the server (NONE = force use server default)
-    #[structopt(short = "e", long = "expires")]
+    /// Time to live as a duration
+    #[structopt(short = "e", long = "expires", value_name = "duration|NONE")]
     pub expires: Option<String>,
-    /// email that the server should notify with the link; default is no email ("NONE" = disable this)
-    #[structopt(short = "r", long = "recipient")]
+    /// Instruct server to email recipient with link (only valid if authenticated)
+    #[structopt(short = "r", long = "recipient", value_name = "email|NONE")]
     pub recipient: Option<String>,
-    /// username for authenticated uploads ("NONE" = disable this)
-    #[structopt(short = "U", long = "username")]
+    /// Username to authenticate uploads (required if apikey set)
+    #[structopt(short = "U", long = "username", value_name = "username|NONE")]
     pub username: Option<String>,
-    /// api key for authenticated uploads ("NONE" = disable this)
-    #[structopt(short = "k", long = "apikey")]
+    /// API key to authenticate uploads (required if username set)
+    #[structopt(short = "k", long = "apikey", value_name = "apikey|NONE")]
     pub apikey: Option<String>,
 }
 
 pub const NAME: &str = "onetimesecret";
 
-pub const INFO: &str =
-    r#"Paste backend to send text to onetimesecret servers <https://github.com/onetimesecret/onetimesecret>.
+pub const INFO: &str = r#"Onetimesecret backend. 
+Supports servers running <https://github.com/onetimesecret/onetimesecret>.
 
 Example config block:
 
@@ -64,10 +64,18 @@ Example config block:
     backend = "onetimesecret"
     url = "https://onetimesecret.com/"
 
-    # optionals
+    # Optional values
+
+    # Password protect the secret.
     password = "password123"
+
+    # Time to live as a duration.
     expires = "1day"
+
+    # Instruct the server to email resulting link to this address (only works when authenticated).
     recipient = "user@example.com"
+
+    # Authentication details. Either both must be set, or neither.
     username = "myuser@example.com"
     apikey = "DEADBEEF"
 "#;

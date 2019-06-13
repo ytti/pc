@@ -32,30 +32,30 @@ pub struct Backend {
 #[structopt(about = "modern_paste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Title for the paste (NONE = untitled)
-    #[structopt(short = "t", long = "title")]
-    title: Option<String>,
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-    /// time to live in seconds
-    #[structopt(short = "e", long = "expires")]
-    pub expires: Option<String>,
-    /// language/filetype/syntax
-    #[structopt(short = "s", long = "syntax")]
-    pub syntax: Option<String>,
-    /// protect paste access with this password (NONE = no password)
-    #[structopt(short = "P", long = "password")]
+    /// Title for the paste
+    #[structopt(short = "t", long = "title", value_name = "title|NONE")]
+    title: Option<String>,
+    /// Time to live as a duration
+    #[structopt(short = "e", long = "expires", value_name = "duration|NONE")]
+    expires: Option<String>,
+    /// Filetype for syntax highlighting
+    #[structopt(short = "s", long = "syntax", value_name = "filetype|NONE")]
+    syntax: Option<String>,
+    /// Protects paste access with a password
+    #[structopt(short = "P", long = "password", value_name = "password|NONE")]
     pub password: Option<String>,
-    /// upload paste as authenticated user (NONE = force anon)
-    #[structopt(short = "k", long = "apikey")]
+    /// Upload paste as authenticated user
+    #[structopt(short = "k", long = "apikey", value_name = "apikey|NONE")]
     pub apikey: Option<String>,
 }
 
 pub const NAME: &str = "modern_paste";
 
 pub const INFO: &str = r#"Modern Paste backend.
-modern-paste source: <https://github.com/LINKIWI/modern-paste/>.
+Supports servers running <https://github.com/LINKIWI/modern-paste/>.
 Example popular instance of this is <https://paste.fedoraproject.org/>.
 
 Example config block:
@@ -64,7 +64,8 @@ Example config block:
     backend = "modern_paste"
     url = "https://paste.fedoraproject.org/"
 
-    # optionals
+    # Optional values
+
     title = "my paste" # default untitled
     expires = "3600s" # default is expiry set by server
     syntax = "python" # default plain text

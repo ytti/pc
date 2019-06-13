@@ -21,25 +21,25 @@ pub struct Backend {
 #[structopt(about = "paste_rs backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 }
 
 pub const NAME: &str = "paste_rs";
 
-pub const INFO: &str =
-    r#"paste.rs paste service backend. Supports https://paste.rs/ and any other pastebin services
-with the following two properties:
+pub const INFO: &str = r#"Paste.rs backend.
+Supports <https://paste.rs/> and any other pastebin services with the following two properties:
 
-1. data is uploaded via plain text in the POST request body to the base url.
+1. data is uploaded as plain text in the POST request body to the url.
 2. the generated paste url is returned in plain text as the response body.
 
 Example config block:
 
     [servers.rs]
     backend = "paste_rs"
-    url = "https://paste.rs/""#;
+    url = "https://paste.rs/"
+"#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {

@@ -23,11 +23,11 @@ pub struct Backend {
 #[structopt(about = "fiche backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// domain
+    /// Overrides domain set in config
     #[structopt(short = "d", long = "domain")]
     domain: Option<String>,
 
-    /// port
+    /// Overrides port set in config
     #[structopt(short = "p", long = "port")]
     port: Option<u16>,
 }
@@ -38,17 +38,21 @@ pub fn default_port() -> u16 {
     9999
 }
 
-pub const INFO: &str =
-    r#"Fiche backend. Supports any servers running fiche <https://github.com/solusipse/fiche>. (Eg.
-termbin.com)
+pub const INFO: &str = r#"Fiche backend.
+Supports any servers running fiche <https://github.com/solusipse/fiche>.
+(for example: termbin.com)
 
 Example config block:
 
     [servers.termbin]
     backend = "fiche"
     url = "termbin.com"
+
+    # Optional values
+
     # default port if missing is 9999
-    port = 9999"#;
+    port = 9999
+"#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {

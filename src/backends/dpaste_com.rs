@@ -32,26 +32,27 @@ pub struct Backend {
 #[structopt(about = "dpaste_com backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Override url in config
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-    /// Set to NONE to use default, overriding any set in config file
-    #[structopt(short = "s", long = "syntax")]
+    /// Filetype for syntax highlighting
+    #[structopt(short = "s", long = "syntax", value_name = "filetype|NONE")]
     syntax: Option<String>,
-    /// Set to NONE to use default, overriding any set in config file
-    #[structopt(short = "a", long = "author")]
+    /// Sets a name for the paste author
+    #[structopt(short = "a", long = "author", value_name = "author|NONE")]
     author: Option<String>,
-    /// Set to NONE to use default, overriding any set in config file
-    #[structopt(short = "t", long = "title")]
+    /// Title for the paste
+    #[structopt(short = "t", long = "title", value_name = "title|NONE")]
     title: Option<String>,
-    /// Set to NONE to force server default
-    #[structopt(short = "e", long = "expires")]
+    /// Time to live as a duration
+    #[structopt(short = "e", long = "expires", value_name = "duration|NONE")]
     expires: Option<String>,
 }
 
 pub const NAME: &str = "dpaste_com";
 
-pub const INFO: &str = r#"Dpaste.com backend. Supports <http://dpaste.com/>.
+pub const INFO: &str = r#"Dpaste.com backend.
+Supports <http://dpaste.com/>.
 
 Example config block:
 
@@ -59,18 +60,20 @@ Example config block:
     backend = "dpaste_com"
     url = "http://dpaste.com/"
 
-    # optional; default is plain text
-    # see <http://dpaste.com/api/v2/syntax-choices/> for list of supported names
+    # Optional values
+
+    # Filetype for syntax highlighting. See <http://dpaste.com/api/v2/syntax-choices/> for list of
+    # supported names.
     syntax = "js"
 
-    # optional; time to live as a duration. default is use server default (7 days).
+    # Time to live as a duration. Default is use server default (7 days).
     # Max duration supported by server is 1year.
     expires = "1d"
 
-    # optional username to publish as; default is anonymous author
+    # Username to publish as. Default is anonymous author.
     author = "my name"
 
-    # optional; default is no title
+    # Title for the paste.
     title = "my paste"
 "#;
 

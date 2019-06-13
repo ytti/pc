@@ -30,14 +30,14 @@ pub struct Backend {
 #[structopt(about = "dpaste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
-    /// syntax/filetype - set to NONE to use default, overriding any set in config file
-    #[structopt(short = "s", long = "syntax")]
+    /// Filetype for syntax highlighting
+    #[structopt(short = "s", long = "syntax", value_name = "filetype|NONE")]
     syntax: Option<String>,
-    /// lifetime of paste in seconds. See server config for extra supported values (eg. onetime,
-    /// never). Set to NONE to disable.
-    #[structopt(short = "e", long = "expires")]
+    /// Time to live as a duration; see server config for extra supported values (eg. onetime, never)
+    #[structopt(short = "e", long = "expires", value_name = "duration|NONE")]
     expires: Option<String>,
 }
 
@@ -52,10 +52,12 @@ Example config block:
     backend = "dpaste"
     url = "https://dpaste.de/"
 
-    # optional; syntax highlighting / filetype (default is set by server)
+    # Optional values
+
+    # Filetype for syntax highlighting. Default is set by the server.
     syntax = "python"
 
-    # optional; lifetime as a duration. Default server config also supports special values like
+    # Paste lifetime as a duration. Default server config also supports special values like
     # "onetime" and "never".
     expires = "3600s"
 "#;

@@ -22,14 +22,15 @@ pub struct Backend {
 #[structopt(about = "pipfi backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 }
 
 pub const NAME: &str = "pipfi";
 
-pub const INFO: &str = r#"Pipfi backend. Supports <http://p.ip.fi/>.
+pub const INFO: &str = r#"Pipfi backend.
+Supports <http://p.ip.fi/>.
 
 Example config block:
 

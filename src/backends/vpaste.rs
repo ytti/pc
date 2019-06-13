@@ -19,23 +19,25 @@ pub struct Backend {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(about = "modern_paste backend")]
+#[structopt(about = "vpaste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Url
+    /// Overrides url set in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
 }
 
 pub const NAME: &str = "vpaste";
 
-pub const INFO: &str = r#"Vpaste backend. Supports any servers running Vpaste <http://vpaste.net/>.
+pub const INFO: &str = r#"Vpaste backend.
+Supports any servers running vpaste <http://vpaste.net/>.
 
 Example config block:
 
     [servers.vp]
     backend = "vpaste"
-    url = "http://vpaste.net/""#;
+    url = "http://vpaste.net/"
+"#;
 
 impl PasteClient for Backend {
     fn apply_args(&mut self, args: Vec<String>) -> clap::Result<()> {

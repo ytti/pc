@@ -44,3 +44,7 @@ url = "http://p.ip.fi/"
 [servers.dpaste]
 backend = "dpaste"
 url = "https://dpaste.de/"
+
+[servers.ubuntu]
+backend = "ubuntu"
+url = "https://paste.ubuntu.com/"

@@ -14,6 +14,7 @@ pub mod onetimesecret;
 pub mod paste_rs;
 pub mod pipfi;
 pub mod sprunge;
+pub mod ubuntu;
 pub mod vpaste;
 
 lazy_static! {
@@ -28,6 +29,7 @@ lazy_static! {
         m.insert(paste_rs::NAME, paste_rs::INFO);
         m.insert(pipfi::NAME, pipfi::INFO);
         m.insert(sprunge::NAME, sprunge::INFO);
+        m.insert(ubuntu::NAME, ubuntu::INFO);
         m.insert(vpaste::NAME, vpaste::INFO);
         m
     };
@@ -47,6 +49,7 @@ pub enum BackendConfig {
     PasteRs(paste_rs::Backend),
     Pipfi(pipfi::Backend),
     Sprunge(sprunge::Backend),
+    Ubuntu(ubuntu::Backend),
     Vpaste(vpaste::Backend),
 }
 
@@ -62,6 +65,7 @@ impl BackendConfig {
             BackendConfig::PasteRs(backend) => Box::new(backend),
             BackendConfig::Pipfi(backend) => Box::new(backend),
             BackendConfig::Sprunge(backend) => Box::new(backend),
+            BackendConfig::Ubuntu(backend) => Box::new(backend),
             BackendConfig::Vpaste(backend) => Box::new(backend),
         }
     }

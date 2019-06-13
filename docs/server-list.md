@@ -14,3 +14,4 @@ A table of public pastebin servers that pc supports, along with the backend to u
 | http://sprunge.us/               | sprunge       |
 | http://p.ip.fi/                  | pipfi         |
 | https://dpaste.de/               | dpaste        |
+| https://paste.ubuntu.com/        | ubuntu        |

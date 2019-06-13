@@ -19,6 +19,7 @@ Key:
 | paste_rs      |       |        |          |                    |      |             | -                   |
 | pipfi         |       |        |          |                    |      |             | x<sup>1</sup>       |
 | sprunge       |       |        |          |                    |      |             | x                   |
+| ubuntu        |       | x      |          |                    |      | x           | x                   |
 | vpaste        |       |        |          |                    |      |             | -                   |
 
 <sup>1</sup>autodetected

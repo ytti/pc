@@ -21,6 +21,7 @@ pub struct Backend {
     #[serde(with = "serde_url")]
     pub url: Url,
     pub syntax: Option<String>,
+    #[serde(default)]
     #[serde(with = "serde_humantime")]
     pub expires: Option<Duration>,
 }
@@ -29,7 +30,6 @@ pub struct Backend {
 #[structopt(about = "dpaste backend")]
 #[structopt(template = "{about}\n\nUSAGE:\n    {usage}\n\n{all-args}")]
 pub struct Opt {
-    /// Override url in config
     #[structopt(short = "u", long = "url")]
     url: Option<Url>,
     /// syntax/filetype - set to NONE to use default, overriding any set in config file

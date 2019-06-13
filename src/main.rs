@@ -117,10 +117,10 @@ fn run() -> Result<(), Box<dyn Error>> {
                 .help("Set a custom file to log to. \"NONE\" disables")
                 .takes_value(true),
         )
-        .subcommand(SubCommand::with_name("list").about("List info about available server blocks"))
-        .subcommand(SubCommand::with_name("list-backends").about("List available backends"))
+        .subcommand(SubCommand::with_name("list").about("Print info about available server blocks"))
+        .subcommand(SubCommand::with_name("list-backends").about("Print available backends"))
         .subcommand(
-            SubCommand::with_name("dump-config").about("Dump current config serialized as toml"),
+            SubCommand::with_name("dump-config").about("Print current config serialized as toml"),
         )
         .subcommand(
             SubCommand::with_name("show-backend")

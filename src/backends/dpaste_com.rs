@@ -23,6 +23,7 @@ pub struct Backend {
     pub syntax: Option<String>,
     pub author: Option<String>,
     pub title: Option<String>,
+    #[serde(default)]
     #[serde(with = "serde_humantime")]
     pub expires: Option<Duration>,
 }

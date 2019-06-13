@@ -21,6 +21,7 @@ pub struct Backend {
     #[serde(with = "serde_url")]
     pub url: Url,
     pub password: Option<String>,
+    #[serde(default)]
     #[serde(with = "serde_humantime")]
     pub expires: Option<Duration>,
     pub recipient: Option<String>,

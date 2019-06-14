@@ -42,7 +42,8 @@ Install from crates.io with cargo:
 cargo install pc
 ```
 
-Arch user repository: [pc-git](https://aur.archlinux.org/packages/pc-git/).
+Arch user repository: [pc-git](https://aur.archlinux.org/packages/pc-git/),
+[pc](https://aur.archlinux.org/packages/pc/).
 
 
 ## Usage examples

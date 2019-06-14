@@ -24,6 +24,27 @@ often and do not want to debug failures because of api changes.
   filetype, private pastes, expire time, etc.
 
 
+## Installation
+
+Build from source:
+
+```
+git clone git@github.com:swalladge/pc.git
+cd pc
+cargo build --release
+./target/release/pc --help
+# copy the binary ^ to your path to use from anywhere
+```
+
+Install from crates.io with cargo:
+
+```
+cargo install pc
+```
+
+Arch user repository: [pc-git](https://aur.archlinux.org/packages/pc-git/).
+
+
 ## Usage examples
 
 Simplest, out of the box usage:

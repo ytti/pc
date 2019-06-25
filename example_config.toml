@@ -172,3 +172,29 @@ expires = "week"
 
 # Username to publish as. Default is anonymous author.
 author = "my name"
+
+
+[servers.ix]
+backend = "ix"
+url = "http://ix.io/"
+
+# Optional values
+
+# Filetype for syntax highlighting. If syntax provided, the text is shown with
+# line numbers and has pygments based html syntax highlighting. This is a
+# client side option that works by adding to the resulting url. Default is raw
+# plain text without html markup. See also http://ix.io/ for more client-side
+# options.
+syntax = "python"
+
+# DISABLED - does not appear to work.
+# # Set number of reads before the paste is deleted. Default is unlimited reads.
+# reads = 2
+
+# Username and password for authenticated pastes; if these are both provided,
+# the program will attempt to authenticate with them. From ix.io: "If the login
+# does not exist, it will be created." Note that either both must be provided,
+# or neither. It is ok to provide them in stages - eg.  username in the config
+# file and api_token on the command line.
+username = "me"
+apikey = "hunter2"

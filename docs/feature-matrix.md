@@ -14,6 +14,7 @@ Key:
 | dpaste_com    | x     | x      |          |                    |      | x           | x                   |
 | fiche         |       |        |          |                    |      |             |                     |
 | haste         |       |        |          |                    |      |             | -                   |
+| ix            |       |        |          |                    | x    |             | x                   |
 | modern_paste  | x     | x      | x        |                    | x    |             | x                   |
 | onetimesecret |       | x      | x        | x                  | x    |             |                     |
 | paste_rs      |       |        |          |                    |      |             | -                   |

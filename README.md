@@ -192,14 +192,15 @@ binary and used as the default config if no config file found.
 
 | server spec                                                         | backend         | example instance                 |
 | ------                                                              | -------         | ---------------                  |
-| [haste](https://github.com/seejohnrun/haste-server)\*               | `haste`         | https://hastebin.com/            |
-| [dpaste](https://github.com/bartTC/dpaste)\*                        | `dpaste`        | https://dpaste.de/               |
 | [dpaste.com](http://dpaste.com/api/v2/)                             | `dpaste_com`    | http://dpaste.com/               |
+| [dpaste](https://github.com/bartTC/dpaste)\*                        | `dpaste`        | https://dpaste.de/               |
 | [fiche](https://github.com/solusipse/fiche)\*                       | `fiche`         | https://termbin.com/             |
+| [haste](https://github.com/seejohnrun/haste-server)\*               | `haste`         | https://hastebin.com/            |
+| [ix.io](http://ix.io/)                                              | `ix`            | http://ix.io/                    |
 | [modern paste](https://github.com/LINKIWI/modern-paste)\*           | `modern_paste`  | https://paste.fedoraproject.org/ |
 | [one-time secret](https://github.com/onetimesecret/onetimesecret)\* | `onetimesecret` | https://onetimesecret.com/       |
-| [paste.rs](https://paste.rs/web)                                    | `paste_rs`      | https://paste.rs/                |
 | [p.ip.fi](http://p.ip.fi/)                                          | `pipfi`         | http://p.ip.fi/                  |
+| [paste.rs](https://paste.rs/web)                                    | `paste_rs`      | https://paste.rs/                |
 | [sprunge](https://github.com/rupa/sprunge)\*                        | `sprunge`       | http://sprunge.us/               |
 | [ubuntu](https://paste.ubuntu.com/)                                 | `ubuntu`        | https://paste.ubuntu.com/        |
 | [vpaste](http://pileus.org/tools/vpaste)\*                          | `vpaste`        | http://vpaste.net/               |

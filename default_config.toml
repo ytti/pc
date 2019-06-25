@@ -48,3 +48,7 @@ url = "https://dpaste.de/"
 [servers.ubuntu]
 backend = "ubuntu"
 url = "https://paste.ubuntu.com/"
+
+[servers.ix]
+backend = "ix"
+url = "http://ix.io/"

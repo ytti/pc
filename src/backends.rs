@@ -9,6 +9,7 @@ pub mod dpaste;
 pub mod dpaste_com;
 pub mod fiche;
 pub mod haste;
+pub mod ix;
 pub mod modern_paste;
 pub mod onetimesecret;
 pub mod paste_rs;
@@ -24,6 +25,7 @@ lazy_static! {
         m.insert(dpaste_com::NAME, dpaste_com::INFO);
         m.insert(fiche::NAME, fiche::INFO);
         m.insert(haste::NAME, haste::INFO);
+        m.insert(ix::NAME, ix::INFO);
         m.insert(modern_paste::NAME, modern_paste::INFO);
         m.insert(onetimesecret::NAME, onetimesecret::INFO);
         m.insert(paste_rs::NAME, paste_rs::INFO);
@@ -44,6 +46,7 @@ pub enum BackendConfig {
     DpasteCom(dpaste_com::Backend),
     Fiche(fiche::Backend),
     Haste(haste::Backend),
+    Ix(ix::Backend),
     ModernPaste(modern_paste::Backend),
     Onetimesecret(onetimesecret::Backend),
     PasteRs(paste_rs::Backend),
@@ -60,6 +63,7 @@ impl BackendConfig {
             BackendConfig::DpasteCom(backend) => Box::new(backend),
             BackendConfig::Fiche(backend) => Box::new(backend),
             BackendConfig::Haste(backend) => Box::new(backend),
+            BackendConfig::Ix(backend) => Box::new(backend),
             BackendConfig::ModernPaste(backend) => Box::new(backend),
             BackendConfig::Onetimesecret(backend) => Box::new(backend),
             BackendConfig::PasteRs(backend) => Box::new(backend),

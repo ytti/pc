@@ -30,3 +30,4 @@ These should be consistently named between backends and have the same semantics.
 * -k --apikey (NONE-able, used for auth password or apikey/token)
 * -U --username (NONE-able, used for auth, semantically different to author)
 * -a --author (NONE-able, poster/uploader name)
+* -R --reads (NONE-able, n reads before paste is deleted)
